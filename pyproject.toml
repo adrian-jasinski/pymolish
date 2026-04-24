@@ -49,6 +49,7 @@ packages = ["src/pymolish"]
 line-length = 88
 target-version = "py310"
 src = ["src"]
+extend-exclude = ["pymol-plugins"]
 
 [tool.ruff.lint]
 select = [

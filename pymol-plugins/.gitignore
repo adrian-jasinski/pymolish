@@ -21,7 +21,6 @@ wheels/
 *.egg
 
 # Virtual Environment
-.venv
 venv/
 env/
 ENV/
@@ -42,7 +41,3 @@ htmlcov/
 .DS_Store
 .env
 .env.local 
-
-
-# data
-data/

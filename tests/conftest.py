@@ -46,11 +46,27 @@ class _PyMOLMock(ModuleType):
 _install_pymol_mock()
 
 
+_CMD_ATTRS_TO_RESET = (
+    "get_names",
+    "get_object_list",
+    "get_type",
+    "count_atoms",
+    "load",
+    "save",
+    "group",
+    "iterate",
+    "delete",
+    "extend",
+)
+
+
 @pytest.fixture
 def pymol_cmd():
-    """Yield the mocked ``pymol.cmd`` with call history reset per test."""
+    """Yield the mocked ``pymol.cmd`` with per-call state reset between tests."""
     cmd = sys.modules["pymol"].cmd
-    cmd.reset_mock()
+    cmd.reset_mock(return_value=True, side_effect=True)
+    for attr in _CMD_ATTRS_TO_RESET:
+        getattr(cmd, attr).reset_mock(return_value=True, side_effect=True)
     cmd.get_names.return_value = []
     cmd.get_object_list.return_value = []
     cmd.get_type.return_value = ""
