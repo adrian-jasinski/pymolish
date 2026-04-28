@@ -6,9 +6,9 @@ from pathlib import Path
 
 from pymol import cmd
 
-from pymolish.core.group_utils import GroupUtils
-from pymolish.core.logging import plog
-from pymolish.core.validators import coerce_bool
+from ...core.group_utils import GroupUtils
+from ...core.logging import plog
+from ...core.validators import coerce_bool
 
 _TAG = "io.export"
 _FORMATS = {"cif", "pdb", "fasta"}

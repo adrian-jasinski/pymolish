@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 
 __version__ = "1.0.0"
 
-_EXTENSION_PACKAGE = "pymolish.extensions"
+_EXTENSION_SUBPACKAGE = ".extensions"
 _META_CATEGORY = "Meta"
 
 
@@ -35,7 +35,7 @@ def _bootstrap_extensions(app: object | None) -> None:
     from .core.logging import plog
 
     try:
-        package = importlib.import_module(_EXTENSION_PACKAGE)
+        package = importlib.import_module(_EXTENSION_SUBPACKAGE, __package__)
     except ImportError as exc:
         plog("bootstrap", f"extensions package missing: {exc}", "error")
         return
@@ -43,7 +43,7 @@ def _bootstrap_extensions(app: object | None) -> None:
     for module_info in pkgutil.iter_modules(package.__path__):
         if not module_info.ispkg:
             continue
-        full_name = f"{_EXTENSION_PACKAGE}.{module_info.name}"
+        full_name = f"{package.__name__}.{module_info.name}"
         try:
             module = importlib.import_module(full_name)
         except ImportError as exc:

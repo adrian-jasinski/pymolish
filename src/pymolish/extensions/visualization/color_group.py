@@ -6,8 +6,8 @@ import random as _random
 
 from pymol import cmd
 
-from pymolish.core.logging import plog
-from pymolish.core.validators import coerce_bool
+from ...core.logging import plog
+from ...core.validators import coerce_bool
 
 from .palettes import COLOR_PALETTES, register_extended_colors
 

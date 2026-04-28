@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
-from pymolish.core.autocompletion import AutocompletionRegistry
-from pymolish.core.registry import CommandRegistry
-from pymolish.core.types import Category
+from ...core.autocompletion import AutocompletionRegistry
+from ...core.registry import CommandRegistry
+from ...core.types import Category
 
 CATEGORY = Category.IO
 

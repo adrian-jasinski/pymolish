@@ -7,7 +7,7 @@ from pathlib import Path
 
 from pymol import cmd
 
-from pymolish.core.logging import plog
+from ...core.logging import plog
 
 _TAG = "io.byres"
 
