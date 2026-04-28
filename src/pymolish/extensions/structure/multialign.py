@@ -7,7 +7,7 @@ import statistics
 
 from pymol import cmd
 
-from pymolish.core.logging import plog
+from ...core.logging import plog
 
 _TAG = "structure.multialign"
 
@@ -131,7 +131,7 @@ def multialign(
     See Also:
         list_objects_with_prefix
     """
-    from pymolish.core.validators import coerce_bool
+    from ...core.validators import coerce_bool
 
     verbose = coerce_bool(verbose)
     group_or_selection = _clean(group_or_selection)

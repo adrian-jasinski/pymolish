@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from pymol import cmd
 
-from pymolish.core.logging import plog
+from ...core.logging import plog
 
 _TAG = "viz.palettes"
 
@@ -302,7 +302,7 @@ def register_extended_colors(
     See Also:
         list_available_palettes, color_group_with_palette
     """
-    from pymolish.core.validators import coerce_bool
+    from ...core.validators import coerce_bool
 
     verbose = coerce_bool(verbose)
 

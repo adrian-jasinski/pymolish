@@ -9,9 +9,9 @@ from pathlib import Path
 
 from pymol import cmd
 
-from pymolish.core.group_utils import GroupUtils
-from pymolish.core.logging import plog
-from pymolish.core.validators import coerce_bool, validate_suffix
+from ...core.group_utils import GroupUtils
+from ...core.logging import plog
+from ...core.validators import coerce_bool, validate_suffix
 
 _TAG = "io.load"
 

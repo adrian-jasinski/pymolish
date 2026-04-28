@@ -4,8 +4,8 @@ from __future__ import annotations
 
 from pymol import cmd
 
-from pymolish.core.logging import plog
-from pymolish.core.validators import coerce_bool
+from ...core.logging import plog
+from ...core.validators import coerce_bool
 
 from .palettes import CARTOON_PALETTES
 

@@ -4,8 +4,8 @@ from __future__ import annotations
 
 from pymol import cmd
 
-from pymolish.core.group_utils import GroupUtils
-from pymolish.core.logging import plog
+from ...core.group_utils import GroupUtils
+from ...core.logging import plog
 
 _TAG = "groups.toggle"
 
