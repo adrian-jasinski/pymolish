@@ -19,7 +19,7 @@ def __init_plugin__(app: object | None = None) -> None:
         create_sorted_group,
         group_info,
         sort_all_groups,
-        sort_group_objects,
+        sort_group,
     )
     from .toggle import group_disable, group_enable, group_status, group_toggle
 
@@ -111,13 +111,13 @@ def __init_plugin__(app: object | None = None) -> None:
 
     # ------------------------------------------------------------------- sort
     registry.register(
-        "sort_group_objects",
-        sort_group_objects,
+        "sort_group",
+        sort_group,
         category=CATEGORY,
-        description="Sort all objects within a group alphabetically",
+        description="Sort all objects within a group alphabetically (asc/desc)",
         examples=[
-            "sort_group_objects my_proteins",
-            "sort_group_objects structures_group",
+            "sort_group my_proteins",
+            "sort_group my_proteins, 1",
         ],
         tags=["group", "sort", "order"],
         see_also=["sort_all_groups", "group_info", "create_sorted_group"],
@@ -127,12 +127,13 @@ def __init_plugin__(app: object | None = None) -> None:
         "sort_all_groups",
         sort_all_groups,
         category=CATEGORY,
-        description="Sort objects in every PyMOL group alphabetically",
+        description="Sort objects in every PyMOL group alphabetically (asc/desc)",
         examples=[
             "sort_all_groups",
+            "sort_all_groups 1",
         ],
         tags=["group", "sort", "order", "batch"],
-        see_also=["sort_group_objects"],
+        see_also=["sort_group"],
     )
 
     registry.register(
@@ -145,7 +146,7 @@ def __init_plugin__(app: object | None = None) -> None:
             "group_info structures_group",
         ],
         tags=["group", "info", "inspect"],
-        see_also=["sort_group_objects", "create_sorted_group"],
+        see_also=["sort_group", "create_sorted_group"],
     )
 
     registry.register(
@@ -158,7 +159,7 @@ def __init_plugin__(app: object | None = None) -> None:
             "create_sorted_group proteins, proteins_sorted",
         ],
         tags=["group", "sort", "create"],
-        see_also=["sort_group_objects", "group_info"],
+        see_also=["sort_group", "group_info"],
     )
 
     # ------------------------------------------------------------------- copy
@@ -280,7 +281,7 @@ def __init_plugin__(app: object | None = None) -> None:
     autocomplete.register("group_next", 0, completers.group_name, "group")
     autocomplete.register("group_previous", 0, completers.group_name, "group")
 
-    autocomplete.register("sort_group_objects", 0, completers.group_name, "group")
+    autocomplete.register("sort_group", 0, completers.group_name, "group")
     autocomplete.register("group_info", 0, completers.group_name, "group")
     autocomplete.register(
         "create_sorted_group", 0, completers.group_name, "source_group"

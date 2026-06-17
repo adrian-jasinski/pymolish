@@ -6,57 +6,66 @@ from pymolish.extensions.groups.sort import (
     create_sorted_group,
     group_info,
     sort_all_groups,
-    sort_group_objects,
+    sort_group,
 )
 
-# ------------------------------------------------------------------ sort_group_objects
+# ------------------------------------------------------------------ sort_group
 
 
-def test_sort_group_objects_reorders_members(pymol_cmd):
+def test_sort_group_reorders_members(pymol_cmd):
     pymol_cmd.get_type.return_value = "object:group"
     pymol_cmd.get_object_list.return_value = ["c", "a", "b"]
 
-    result = sort_group_objects("my_group")
+    result = sort_group("my_group")
     assert result == ["a", "b", "c"]
-    # remove then add should have been called via group()
-    assert pymol_cmd.group.call_count >= 6  # 3 removes + 3 adds
+    pymol_cmd.order.assert_called_once()
+    assert pymol_cmd.order.call_args.args[0] == "a b c"
 
 
-def test_sort_group_objects_already_sorted(pymol_cmd, capsys):
+def test_sort_group_descending(pymol_cmd):
     pymol_cmd.get_type.return_value = "object:group"
     pymol_cmd.get_object_list.return_value = ["a", "b", "c"]
 
-    result = sort_group_objects("my_group")
+    result = sort_group("my_group", 1)
+    assert result == ["c", "b", "a"]
+    pymol_cmd.order.assert_called_once()
+    assert pymol_cmd.order.call_args.args[0] == "c b a"
+
+
+def test_sort_group_already_sorted(pymol_cmd, capsys):
+    pymol_cmd.get_type.return_value = "object:group"
+    pymol_cmd.get_object_list.return_value = ["a", "b", "c"]
+
+    result = sort_group("my_group")
     assert result == ["a", "b", "c"]
     assert "already sorted" in capsys.readouterr().out.lower()
-    # No group() calls should be made
-    pymol_cmd.group.assert_not_called()
+    pymol_cmd.order.assert_not_called()
 
 
-def test_sort_group_objects_single_object(pymol_cmd, capsys):
+def test_sort_group_single_object(pymol_cmd, capsys):
     pymol_cmd.get_type.return_value = "object:group"
     pymol_cmd.get_object_list.return_value = ["only_one"]
 
-    result = sort_group_objects("my_group")
+    result = sort_group("my_group")
     assert result == ["only_one"]
-    pymol_cmd.group.assert_not_called()
+    pymol_cmd.order.assert_not_called()
 
 
-def test_sort_group_objects_missing_group(pymol_cmd, capsys):
+def test_sort_group_missing_group(pymol_cmd, capsys):
     pymol_cmd.get_type.return_value = ""
     pymol_cmd.get_object_list.return_value = []
     pymol_cmd.get_names.return_value = []
 
-    result = sort_group_objects("ghost")
+    result = sort_group("ghost")
     assert result == []
     assert "not found" in capsys.readouterr().out.lower()
 
 
-def test_sort_group_objects_strips_quotes(pymol_cmd):
+def test_sort_group_strips_quotes(pymol_cmd):
     pymol_cmd.get_type.return_value = "object:group"
     pymol_cmd.get_object_list.return_value = ["b", "a"]
 
-    result = sort_group_objects('"my_group"')
+    result = sort_group('"my_group"')
     assert result == ["a", "b"]
 
 

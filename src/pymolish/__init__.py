@@ -9,15 +9,19 @@ from __future__ import annotations
 
 import importlib
 import pkgutil
+from types import ModuleType
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from .core.registry import CommandInfo
 
-__version__ = "1.0.0"
+__version__ = "0.1.2"
 
 _EXTENSION_SUBPACKAGE = ".extensions"
+_EXTENSION_ABSOLUTE = "pymolish.extensions"
 _META_CATEGORY = "Meta"
+
+_extensions_loaded: bool = False
 
 
 def __init_plugin__(app: object | None = None) -> None:
@@ -30,15 +34,39 @@ def __init_plugin__(app: object | None = None) -> None:
     _bootstrap_extensions(app)
 
 
+def _import_extensions_package() -> ModuleType | None:
+    """Import the ``pymolish.extensions`` package, tolerating load context.
+
+    PyMOL can load the plugin in a context where ``__package__`` is unset, which
+    breaks the relative import. Fall back to the absolute name so extension
+    discovery survives both the Plugin Manager and a plain ``import pymolish``.
+    """
+    from .core.logging import plog
+
+    for module_name, anchor in (
+        (_EXTENSION_SUBPACKAGE, __package__),
+        (_EXTENSION_ABSOLUTE, None),
+    ):
+        if module_name.startswith(".") and not anchor:
+            continue
+        try:
+            return importlib.import_module(module_name, anchor)
+        except ImportError as exc:
+            last_exc = exc
+    plog("bootstrap", f"extensions package missing: {last_exc}", "error")
+    return None
+
+
 def _bootstrap_extensions(app: object | None) -> None:
     """Import every extension sub-package and run its ``__init_plugin__``."""
     from .core.logging import plog
 
-    try:
-        package = importlib.import_module(_EXTENSION_SUBPACKAGE, __package__)
-    except ImportError as exc:
-        plog("bootstrap", f"extensions package missing: {exc}", "error")
+    global _extensions_loaded
+
+    package = _import_extensions_package()
+    if package is None:
         return
+    _extensions_loaded = True
 
     for module_info in pkgutil.iter_modules(package.__path__):
         if not module_info.ispkg:
@@ -55,6 +83,19 @@ def _bootstrap_extensions(app: object | None) -> None:
                 initializer(app)
             except Exception as exc:  # noqa: BLE001
                 plog("bootstrap", f"{full_name}.__init_plugin__ failed: {exc}", "error")
+
+
+def _ensure_extensions_loaded() -> None:
+    """Bootstrap extension commands on demand if they are not registered yet.
+
+    The discovery meta-commands call this so they list the full library even
+    when PyMOL loaded the plugin in a way that ran the meta registration but
+    never completed ``_bootstrap_extensions`` (e.g. an unusual plugin loader).
+    The attempt runs at most once.
+    """
+    if _extensions_loaded:
+        return
+    _bootstrap_extensions(None)
 
 
 def _register_meta_commands() -> None:
@@ -127,6 +168,7 @@ def pymolish_list(category: str | None = None) -> list[str]:
     from .core.logging import plog
     from .core.registry import CommandRegistry
 
+    _ensure_extensions_loaded()
     registry = CommandRegistry.instance()
     entries = registry.list_commands(category)
     if not entries:
@@ -183,6 +225,7 @@ def pymolish_search(term: str) -> list[str]:
     from .core.logging import plog
     from .core.registry import CommandRegistry
 
+    _ensure_extensions_loaded()
     matches = CommandRegistry.instance().search(term)
     if not matches:
         plog("search", f"no matches for {term!r}")
@@ -197,6 +240,7 @@ def pymolish_categories() -> dict[str, int]:
     from .core.logging import plog
     from .core.registry import CommandRegistry
 
+    _ensure_extensions_loaded()
     registry = CommandRegistry.instance()
     counts: dict[str, int] = {}
     for info in registry.list_commands():
@@ -211,6 +255,7 @@ def pymolish_version() -> str:
     from .core.logging import plog
     from .core.registry import CommandRegistry
 
+    _ensure_extensions_loaded()
     total = len(CommandRegistry.instance())
     plog("version", f"pymolish {__version__} ({total} commands loaded)")
     return __version__

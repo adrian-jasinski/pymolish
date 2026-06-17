@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from pymol import cmd
+
 from ...core.group_utils import GroupUtils
 from ...core.logging import plog
 
@@ -15,23 +17,23 @@ def _clean(value: str) -> str:
     return value.strip().strip("'\"")
 
 
-def sort_group_objects(group_name: str) -> list[str]:
+def sort_group(group_name: str, reverse: int = 0) -> list[str]:
     """Sort all objects within a group alphabetically (case-insensitive).
 
-    Removes objects from the group one-by-one then re-adds them in sorted
-    order.  Object data is not modified — only the group membership order
-    changes.
+    Reorders the objects in PyMOL's Names list via ``cmd.order`` so the
+    change is reflected in the sidebar.
 
     Args:
         group_name: Name of an existing PyMOL group.
+        reverse: ``0`` for ascending (A→Z, default), ``1`` for descending (Z→A).
 
     Returns:
         The sorted list of object names, or an empty list when the group does
         not exist or contains fewer than two objects.
 
     Examples:
-        PyMOL> sort_group_objects my_proteins
-        PyMOL> sort_group_objects structures_group
+        PyMOL> sort_group my_proteins
+        PyMOL> sort_group my_proteins, 1
 
     Since:
         1.0.0
@@ -40,6 +42,7 @@ def sort_group_objects(group_name: str) -> list[str]:
         sort_all_groups, group_info, create_sorted_group
     """
     group_name = _clean(group_name)
+    descending = bool(int(reverse))
 
     objects = GroupUtils.get_group_objects(group_name)
     if objects is None:
@@ -55,40 +58,30 @@ def sort_group_objects(group_name: str) -> list[str]:
         )
         return list(objects)
 
-    sorted_objects = sorted(objects, key=str.lower)
+    sorted_objects = sorted(objects, key=str.lower, reverse=descending)
     if objects == sorted_objects:
         plog(_TAG, f"group {group_name!r} is already sorted")
         return sorted_objects
 
-    # Remove then re-add in sorted order.
     try:
-        for obj in objects:
-            GroupUtils.remove_from_group(group_name, obj)
-        for obj in sorted_objects:
-            GroupUtils.add_to_group(group_name, obj)
+        cmd.order(" ".join(sorted_objects), sort="no", location="current")
     except Exception as exc:  # noqa: BLE001
         plog(_TAG, f"failed to reorder {group_name!r}: {exc}", "error")
-        # Attempt to restore original order.
-        try:
-            for obj in objects:
-                GroupUtils.remove_from_group(group_name, obj)
-            for obj in objects:
-                GroupUtils.add_to_group(group_name, obj)
-            plog(_TAG, "original order restored", "warn")
-        except Exception:  # noqa: BLE001
-            plog(
-                _TAG,
-                "could not restore original order — manual fix may be required",
-                "error",
-            )
         return []
 
-    plog(_TAG, f"sorted {len(sorted_objects)} object(s) in {group_name!r}")
+    direction = "desc" if descending else "asc"
+    plog(
+        _TAG,
+        f"sorted {len(sorted_objects)} object(s) in {group_name!r} ({direction})",
+    )
     return sorted_objects
 
 
-def sort_all_groups() -> dict[str, list[str]]:
+def sort_all_groups(reverse: int = 0) -> dict[str, list[str]]:
     """Sort objects in every PyMOL group alphabetically.
+
+    Args:
+        reverse: ``0`` for ascending (A→Z, default), ``1`` for descending (Z→A).
 
     Returns:
         Dict mapping group name to the sorted object list for that group.
@@ -96,12 +89,13 @@ def sort_all_groups() -> dict[str, list[str]]:
 
     Examples:
         PyMOL> sort_all_groups
+        PyMOL> sort_all_groups 1
 
     Since:
         1.0.0
 
     See Also:
-        sort_group_objects
+        sort_group
     """
     groups = GroupUtils.get_all_groups()
     if not groups:
@@ -110,7 +104,7 @@ def sort_all_groups() -> dict[str, list[str]]:
 
     results: dict[str, list[str]] = {}
     for grp in groups:
-        sorted_objs = sort_group_objects(grp)
+        sorted_objs = sort_group(grp, reverse)
         if sorted_objs:
             results[grp] = sorted_objs
 
@@ -136,7 +130,7 @@ def group_info(group_name: str) -> dict[str, object]:
         1.0.0
 
     See Also:
-        sort_group_objects, create_sorted_group
+        sort_group, create_sorted_group
     """
     group_name = _clean(group_name)
 
@@ -184,7 +178,7 @@ def create_sorted_group(source_group: str, new_group_name: str = "") -> list[str
         1.0.0
 
     See Also:
-        sort_group_objects, group_info
+        sort_group, group_info
     """
     source_group = _clean(source_group)
     new_group_name = _clean(new_group_name) or f"{source_group}_sorted"

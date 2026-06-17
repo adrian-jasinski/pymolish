@@ -15,7 +15,7 @@ _ALL_COMMANDS = [
     "group_next",
     "group_previous",
     # sort
-    "sort_group_objects",
+    "sort_group",
     "sort_all_groups",
     "group_info",
     "create_sorted_group",
@@ -61,7 +61,7 @@ def test_init_plugin_registers_autocompletion(pymol_cmd):
         "group_status",
         "group_next",
         "group_previous",
-        "sort_group_objects",
+        "sort_group",
         "group_info",
         "create_sorted_group",
         "copy_group",

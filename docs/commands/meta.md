@@ -17,7 +17,7 @@ _5 command(s). Generated from the command registry — do not edit by hand._
 List categories with command counts
 
 - **Usage:** `pymolish_categories`
-- **Since:** 1.0.0
+- **Since:** 0.1.1
 - **Tags:** `meta`, `discovery`
 
 **Examples:**
@@ -39,7 +39,7 @@ Print each category with the number of commands it contains.
 Print detailed help for a registered command
 
 - **Usage:** `pymolish_help <name>`
-- **Since:** 1.0.0
+- **Since:** 0.1.1
 - **Tags:** `meta`, `help`
 
 **Examples:**
@@ -67,7 +67,7 @@ Returns:
 List all registered commands, optionally filtered by category
 
 - **Usage:** `pymolish_list [category=None]`
-- **Since:** 1.0.0
+- **Since:** 0.1.1
 - **Tags:** `meta`, `discovery`
 
 **Examples:**
@@ -93,7 +93,7 @@ Returns:
 Search commands by name, description, or tags
 
 - **Usage:** `pymolish_search <term>`
-- **Since:** 1.0.0
+- **Since:** 0.1.1
 - **Tags:** `meta`, `search`
 
 **Examples:**
@@ -116,7 +116,7 @@ Search registered commands by ``term`` across names, descriptions, tags.
 Show pymolish version and number of loaded commands
 
 - **Usage:** `pymolish_version`
-- **Since:** 1.0.0
+- **Since:** 0.1.1
 - **Tags:** `meta`, `version`
 
 **Examples:**

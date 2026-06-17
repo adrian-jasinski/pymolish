@@ -37,3 +37,17 @@ def test_pymolish_categories_counts(pymol_cmd):
     pymolish.__init_plugin__(None)
     counts = pymolish.pymolish_categories()
     assert counts.get("Meta") == 5
+
+
+def test_pymolish_list_self_heals_when_only_meta_registered(pymol_cmd, monkeypatch):
+    """If extensions were never bootstrapped, listing triggers it lazily."""
+    monkeypatch.setattr(pymolish, "_extensions_loaded", False)
+    pymolish._register_meta_commands()
+    registry = CommandRegistry.instance()
+    assert registry.categories() == ["Meta"]
+
+    names = pymolish.pymolish_list()
+
+    assert len(names) > 5
+    assert set(registry.categories()) > {"Meta"}
+    assert "load_files" in registry

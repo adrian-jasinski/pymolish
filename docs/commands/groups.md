@@ -20,8 +20,8 @@ _18 command(s). Generated from the command registry — do not edit by hand._
 - [`list_merged_objects`](#list_merged_objects) — List all objects that contain a merged structure
 - [`merge_to_group`](#merge_to_group) — Merge a structure into every object in a group
 - [`merge_to_objects`](#merge_to_objects) — Merge a structure into specific objects
-- [`sort_all_groups`](#sort_all_groups) — Sort objects in every PyMOL group alphabetically
-- [`sort_group_objects`](#sort_group_objects) — Sort all objects within a group alphabetically
+- [`sort_all_groups`](#sort_all_groups) — Sort objects in every PyMOL group alphabetically (asc/desc)
+- [`sort_group`](#sort_group) — Sort all objects within a group alphabetically (asc/desc)
 
 ---
 
@@ -121,7 +121,7 @@ Create a new group whose members are sorted alphabetically
 - **Usage:** `create_sorted_group <source_group> [new_group_name='']`
 - **Since:** 1.0.0
 - **Tags:** `group`, `sort`, `create`
-- **See also:** `sort_group_objects`, `group_info`
+- **See also:** `sort_group`, `group_info`
 
 **Examples:**
 
@@ -154,7 +154,7 @@ Since:
     1.0.0
 
 See Also:
-    sort_group_objects, group_info
+    sort_group, group_info
 ```
 
 </details>
@@ -351,7 +351,7 @@ Display metadata and sorting status for a group
 - **Usage:** `group_info <group_name>`
 - **Since:** 1.0.0
 - **Tags:** `group`, `info`, `inspect`
-- **See also:** `sort_group_objects`, `create_sorted_group`
+- **See also:** `sort_group`, `create_sorted_group`
 
 **Examples:**
 
@@ -380,7 +380,7 @@ Since:
     1.0.0
 
 See Also:
-    sort_group_objects, create_sorted_group
+    sort_group, create_sorted_group
 ```
 
 </details>
@@ -732,17 +732,18 @@ See Also:
 
 ### `sort_all_groups`
 
-Sort objects in every PyMOL group alphabetically
+Sort objects in every PyMOL group alphabetically (asc/desc)
 
-- **Usage:** `sort_all_groups`
+- **Usage:** `sort_all_groups [reverse=0]`
 - **Since:** 1.0.0
 - **Tags:** `group`, `sort`, `order`, `batch`
-- **See also:** `sort_group_objects`
+- **See also:** `sort_group`
 
 **Examples:**
 
 ```
 sort_all_groups
+sort_all_groups 1
 ```
 
 <details><summary>Full docstring</summary>
@@ -750,27 +751,31 @@ sort_all_groups
 ```
 Sort objects in every PyMOL group alphabetically.
 
+Args:
+    reverse: ``0`` for ascending (A→Z, default), ``1`` for descending (Z→A).
+
 Returns:
     Dict mapping group name to the sorted object list for that group.
     Groups that failed or were skipped are not included.
 
 Examples:
     PyMOL> sort_all_groups
+    PyMOL> sort_all_groups 1
 
 Since:
     1.0.0
 
 See Also:
-    sort_group_objects
+    sort_group
 ```
 
 </details>
 
-### `sort_group_objects`
+### `sort_group`
 
-Sort all objects within a group alphabetically
+Sort all objects within a group alphabetically (asc/desc)
 
-- **Usage:** `sort_group_objects <group_name>`
+- **Usage:** `sort_group <group_name> [reverse=0]`
 - **Since:** 1.0.0
 - **Tags:** `group`, `sort`, `order`
 - **See also:** `sort_all_groups`, `group_info`, `create_sorted_group`
@@ -778,8 +783,8 @@ Sort all objects within a group alphabetically
 **Examples:**
 
 ```
-sort_group_objects my_proteins
-sort_group_objects structures_group
+sort_group my_proteins
+sort_group my_proteins, 1
 ```
 
 <details><summary>Full docstring</summary>
@@ -787,20 +792,20 @@ sort_group_objects structures_group
 ```
 Sort all objects within a group alphabetically (case-insensitive).
 
-Removes objects from the group one-by-one then re-adds them in sorted
-order.  Object data is not modified — only the group membership order
-changes.
+Reorders the objects in PyMOL's Names list via ``cmd.order`` so the
+change is reflected in the sidebar.
 
 Args:
     group_name: Name of an existing PyMOL group.
+    reverse: ``0`` for ascending (A→Z, default), ``1`` for descending (Z→A).
 
 Returns:
     The sorted list of object names, or an empty list when the group does
     not exist or contains fewer than two objects.
 
 Examples:
-    PyMOL> sort_group_objects my_proteins
-    PyMOL> sort_group_objects structures_group
+    PyMOL> sort_group my_proteins
+    PyMOL> sort_group my_proteins, 1
 
 Since:
     1.0.0
