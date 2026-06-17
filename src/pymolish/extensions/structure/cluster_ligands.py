@@ -8,17 +8,11 @@ from __future__ import annotations
 
 from pymol import cmd
 
+from ...core.cli import clean as _clean
 from ...core.logging import plog
 from ...core.validators import coerce_bool
 
 _TAG = "structure.cluster_ligands"
-
-
-def _clean(value: str) -> str:
-    """Strip one layer of surrounding quotes from PyMOL command arguments."""
-    if not isinstance(value, str):
-        return value
-    return value.strip().strip("'\"")
 
 
 def _resolve_ligand_objects(source: str) -> list[str]:

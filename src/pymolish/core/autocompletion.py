@@ -8,7 +8,7 @@ into ``cmd.auto_arg`` so PyMOL's tab completion picks them up.
 from __future__ import annotations
 
 from collections.abc import Callable, Iterable
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import ClassVar
 
 from pymol import cmd
@@ -90,11 +90,6 @@ class AutocompletionRegistry:
     def __init__(self) -> None:
         """Initialize an empty registry. Prefer :meth:`instance` for normal use."""
         self._entries: list[Completion] = []
-        self._applied: bool = False
-
-    def __init_subclass__(cls, **kwargs: object) -> None:
-        """Prevent subclassing — the registry is meant to be used as-is."""
-        raise TypeError("AutocompletionRegistry may not be subclassed")
 
     @classmethod
     def instance(cls) -> AutocompletionRegistry:
@@ -140,33 +135,3 @@ class AutocompletionRegistry:
                 auto_arg.append({})
             slot = auto_arg[entry.position]
             slot[entry.command] = [entry.completer, entry.label]
-        self._applied = True
-
-
-@dataclass
-class CategoryCompletions:
-    """Helper that batches registrations for a single category.
-
-    Not used by the core; provided for extension authors who want a tidy local
-    DSL.
-    """
-
-    command: str
-    registry: AutocompletionRegistry
-    bindings: list[tuple[int, Completer, str]] = field(default_factory=list)
-
-    def add(
-        self,
-        position: int,
-        completer: Completer,
-        label: str = "",
-    ) -> CategoryCompletions:
-        """Queue a binding and return ``self`` for chaining."""
-        self.bindings.append((position, completer, label))
-        return self
-
-    def commit(self) -> None:
-        """Flush queued bindings into the shared registry."""
-        for position, completer, label in self.bindings:
-            self.registry.register(self.command, position, completer, label)
-        self.bindings.clear()

@@ -6,19 +6,13 @@ from pathlib import Path
 
 from pymol import cmd
 
+from ...core.cli import clean as _clean
 from ...core.group_utils import GroupUtils
 from ...core.logging import plog
 from ...core.validators import coerce_bool
 
 _TAG = "io.export"
 _FORMATS = {"cif", "pdb", "fasta"}
-
-
-def _clean(value: str) -> str:
-    """Strip one layer of surrounding quotes from PyMOL command arguments."""
-    if not isinstance(value, str):
-        return value
-    return value.strip().strip("'\"")
 
 
 def _ensure_output_dir(output_dir: Path) -> bool:

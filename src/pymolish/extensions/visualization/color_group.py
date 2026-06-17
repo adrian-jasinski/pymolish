@@ -6,19 +6,12 @@ import random as _random
 
 from pymol import cmd
 
+from ...core.cli import clean as _clean
 from ...core.logging import plog
 from ...core.validators import coerce_bool
-
 from .palettes import COLOR_PALETTES, register_extended_colors
 
 _TAG = "viz.color_group"
-
-
-def _clean(value: str) -> str:
-    """Strip one layer of surrounding quotes from PyMOL command arguments."""
-    if not isinstance(value, str):
-        return value
-    return value.strip().strip("'\"")
 
 
 def _resolve_targets(group_or_selection: str) -> list[str]:

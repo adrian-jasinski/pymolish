@@ -111,7 +111,9 @@ def _render_category(category: str, commands: list) -> str:
         lines.append("## Commands in this category")
         lines.append("")
         for info in commands:
-            lines.append(f"- [`{info.name}`](#{info.name.lower()}) — {info.description}")
+            lines.append(
+                f"- [`{info.name}`](#{info.name.lower()}) — {info.description}"
+            )
         lines.append("")
         lines.append("---")
         lines.append("")
@@ -173,8 +175,10 @@ def main() -> int:
     index_path = DOCS_DIR / "README.md"
     index_path.write_text(_render_index(entries), encoding="utf-8")
     print(f"wrote {index_path.relative_to(REPO_ROOT)} (index)")
-    print(f"total: {sum(count for _, _, count in entries)} commands across "
-          f"{len(entries)} categories")
+    print(
+        f"total: {sum(count for _, _, count in entries)} commands across "
+        f"{len(entries)} categories"
+    )
     return 0
 
 

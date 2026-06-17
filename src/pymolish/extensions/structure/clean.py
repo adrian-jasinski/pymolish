@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from pymol import cmd
 
+from ...core.cli import clean as _clean
 from ...core.logging import plog
 
 _TAG = "structure.clean"
@@ -34,13 +35,6 @@ _METALS = [
     "RH",
     "RU",
 ]
-
-
-def _clean(value: str) -> str:
-    """Strip one layer of surrounding quotes from PyMOL command arguments."""
-    if not isinstance(value, str):
-        return value
-    return value.strip().strip("'\"")
 
 
 def remove_ions(selection: str = "all") -> int:

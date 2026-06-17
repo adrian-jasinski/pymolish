@@ -75,13 +75,6 @@ def test_search_matches_name_description_and_tags(pymol_cmd):
     assert registry.search("") == []
 
 
-def test_subclassing_is_rejected():
-    with pytest.raises(TypeError):
-
-        class _Bad(CommandRegistry):  # noqa: D401
-            """Should never instantiate."""
-
-
 def test_usage_inference_includes_defaults(pymol_cmd):
     registry = CommandRegistry.instance()
     info = registry.register(

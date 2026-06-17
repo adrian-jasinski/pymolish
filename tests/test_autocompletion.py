@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from pymolish.core.autocompletion import AutocompletionRegistry
 
 
@@ -32,10 +30,3 @@ def test_apply_populates_cmd_auto_arg(pymol_cmd):
     assert "load_files" in slot
     assert slot["load_files"][0] is completer
     assert slot["load_files"][1] == "suffix"
-
-
-def test_subclassing_is_rejected():
-    with pytest.raises(TypeError):
-
-        class _Bad(AutocompletionRegistry):  # noqa: D401
-            """Should never instantiate."""

@@ -7,16 +7,10 @@ from pathlib import Path
 
 from pymol import cmd
 
+from ...core.cli import clean as _clean
 from ...core.logging import plog
 
 _TAG = "io.byres"
-
-
-def _clean(value: str) -> str:
-    """Strip one layer of surrounding quotes from PyMOL command arguments."""
-    if not isinstance(value, str):
-        return value
-    return value.strip().strip("'\"")
 
 
 def export_byres_to_csv(selection: str, outfile: str) -> int:

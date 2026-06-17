@@ -48,10 +48,6 @@ class CommandRegistry:
         """Initialize an empty registry. Prefer :meth:`instance` for normal use."""
         self._commands: dict[str, CommandInfo] = {}
 
-    def __init_subclass__(cls, **kwargs: object) -> None:
-        """Disallow subclassing — the registry is meant to be used as-is."""
-        raise TypeError("CommandRegistry may not be subclassed")
-
     @classmethod
     def instance(cls) -> CommandRegistry:
         """Return the process-wide registry, creating it on first access."""

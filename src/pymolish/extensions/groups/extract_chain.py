@@ -4,18 +4,12 @@ from __future__ import annotations
 
 from pymol import cmd
 
+from ...core.cli import clean as _clean
 from ...core.group_utils import GroupUtils
 from ...core.logging import plog
 from ...core.validators import coerce_bool
 
 _TAG = "groups.extract_chain"
-
-
-def _clean(value: str) -> str:
-    """Strip one layer of surrounding quotes from a PyMOL command argument."""
-    if not isinstance(value, str):
-        return value
-    return value.strip().strip("'\"")
 
 
 def _resolve_targets(group_pattern: str) -> list[str]:

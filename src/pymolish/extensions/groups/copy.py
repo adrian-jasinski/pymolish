@@ -4,17 +4,11 @@ from __future__ import annotations
 
 from pymol import cmd
 
+from ...core.cli import clean as _clean
 from ...core.group_utils import GroupUtils
 from ...core.logging import plog
 
 _TAG = "groups.copy"
-
-
-def _clean(value: str) -> str:
-    """Strip one layer of surrounding quotes from a PyMOL command argument."""
-    if not isinstance(value, str):
-        return value
-    return value.strip().strip("'\"")
 
 
 def copy_group(

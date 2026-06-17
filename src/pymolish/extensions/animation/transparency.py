@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from pymol import cmd
 
+from ...core.cli import clean as _clean
 from ...core.logging import plog
 
 _TAG = "animation.transparency"
@@ -15,13 +16,6 @@ _SETTINGS: dict[int, str] = {
     2: "sphere_transparency",
     3: "cgo_transparency",
 }
-
-
-def _clean(value: str) -> str:
-    """Strip one layer of surrounding quotes from PyMOL CLI arguments."""
-    if not isinstance(value, str):
-        return value
-    return value.strip().strip("'\"")
 
 
 def _validate_transparency_type(t: int) -> bool:
