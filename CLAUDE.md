@@ -20,7 +20,6 @@ src/pymolish/
     structure/             # Structure Analysis (multialign, clean, cluster_ligands, fetch_uniprot)
     selection/             # Selection Helpers (sequence_search)
     visualization/         # Color & Visualization (palettes, color_group, color_ss)
-    animation/             # Movie & Animation (transparency, movie_group)
   gui/                     # Shared PyQt GUI infrastructure (base_dialog, widgets)
 tests/                     # pytest with mocked pymol.cmd
 docs/commands/             # Auto-generated command reference (one .md per category)

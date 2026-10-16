@@ -155,12 +155,12 @@ def main() -> int:
 
     by_category: dict[str, list] = {}
     for info in registry.list_commands():
-        # Strip trailing whitespace / quote artifacts from descriptions for stable output.
+        # Strip trailing whitespace / quote artifacts for stable output.
         info = replace(info, description=info.description.strip())
         by_category.setdefault(info.category, []).append(info)
 
     DOCS_DIR.mkdir(parents=True, exist_ok=True)
-    # Remove stale files we previously generated (but keep the README.md which we rewrite).
+    # Remove stale generated files, including the README.md rewritten below.
     for existing in DOCS_DIR.glob("*.md"):
         existing.unlink()
 

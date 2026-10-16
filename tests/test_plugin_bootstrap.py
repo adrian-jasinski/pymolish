@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import pymolish
+from pymolish.core.autocompletion import AutocompletionRegistry
 from pymolish.core.registry import CommandRegistry
 
 
@@ -36,7 +37,52 @@ def test_pymolish_search_returns_empty_on_miss(pymol_cmd, capsys):
 def test_pymolish_categories_counts(pymol_cmd):
     pymolish.__init_plugin__(None)
     counts = pymolish.pymolish_categories()
-    assert counts.get("Meta") == 5
+    assert counts == {
+        "Groups": 18,
+        "I/O": 7,
+        "Meta": 5,
+        "Selection": 1,
+        "Structure": 8,
+        "Visualization": 6,
+    }
+
+
+def test_animation_commands_are_removed(pymol_cmd, capsys):
+    pymolish.__init_plugin__(None)
+    registry = CommandRegistry.instance()
+    removed = {
+        "fade_in",
+        "fade_out",
+        "movie_from_group",
+        "movie_transparency",
+        "set_frame_transparency",
+        "suggest_transparency_type",
+        "transparency_pulse",
+        "transparency_range",
+        "transparency_sequence",
+    }
+
+    names = pymolish.pymolish_list()
+    assert len(names) == 45
+    assert removed.isdisjoint(names)
+    assert "== Animation ==" not in capsys.readouterr().out
+    assert registry.list_commands("Animation") == []
+    assert pymolish.pymolish_list("Animation") == []
+    assert pymolish.pymolish_search("animation") == []
+    for name in removed:
+        assert registry.get(name) is None
+        assert pymolish.pymolish_search(name) == []
+        assert pymolish.pymolish_help(name) is None
+
+    extended = {call.args[0] for call in pymol_cmd.extend.call_args_list}
+    assert removed.isdisjoint(extended)
+    completions = AutocompletionRegistry.instance().entries()
+    assert removed.isdisjoint(entry.command for entry in completions)
+    for slot in pymol_cmd.auto_arg:
+        assert removed.isdisjoint(slot)
+
+    pymolish.pymolish_version()
+    assert "(45 commands loaded)" in capsys.readouterr().out
 
 
 def test_pymolish_list_self_heals_when_only_meta_registered(pymol_cmd, monkeypatch):

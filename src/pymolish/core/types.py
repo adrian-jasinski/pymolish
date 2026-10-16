@@ -17,7 +17,6 @@ class Category(str, Enum):
     STRUCTURE = "Structure"
     SELECTION = "Selection"
     VISUALIZATION = "Visualization"
-    ANIMATION = "Animation"
     META = "Meta"
 
     def __str__(self) -> str:  # noqa: D105

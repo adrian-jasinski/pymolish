@@ -4,7 +4,6 @@ Auto-generated from the command registry by `scripts/generate_docs.py`. Run `uv 
 
 ## Categories
 
-- [Animation](animation.md) — 9 command(s)
 - [Groups](groups.md) — 18 command(s)
 - [I/O](i_o.md) — 7 command(s)
 - [Meta](meta.md) — 5 command(s)

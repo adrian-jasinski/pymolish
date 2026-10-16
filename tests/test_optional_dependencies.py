@@ -46,8 +46,8 @@ def test_commands_remain_available_without_optional_dependencies():
         assert not attempts, attempts
         assert not output.getvalue(), output.getvalue()
         registry = CommandRegistry.instance()
-        assert len(registry) == 54, len(registry)
-        assert len(registry.categories()) == 7
+        assert len(registry) == 45, len(registry)
+        assert len(registry.categories()) == 6
 
         cases = [
             ('cluster_ligands_by_position', 'ligands', 'numpy', 'numpy', {}),

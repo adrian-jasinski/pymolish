@@ -43,6 +43,9 @@ htmlcov/
 .env
 .env.local 
 
+# Generated plugin archive
+plugin/*.zip
+
 
 # data
 data/
