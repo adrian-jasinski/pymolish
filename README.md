@@ -22,7 +22,22 @@ It is meant to replace the repetitive scripting most PyMOL users end up writing 
 
 - PyMOL Open Source
 - Python 3.10 or newer — the same interpreter PyMOL uses
-- Optional (only needed for specific features): `numpy`, `matplotlib`, `biopython`, `requests`, `PyQt5`
+- Optional packages available through extras: `numpy`, `matplotlib`, `biopython`, `requests`, `PyQt5`
+
+Missing optional libraries do not prevent the plugin from loading or its other
+commands from running. Dependencies are checked when a command needs them. If one
+is missing, that command prints the dependency name and installation command,
+returns an empty result, and leaves the other commands available. For example:
+
+```text
+cluster_ligands_by_position cannot run: numpy is required but is not installed.
+Install with: pip install 'pymolish[numpy]' in PyMOL's Python environment.
+```
+
+Ligand clustering needs NumPy; sequence search needs Biopython; UniProt fetching
+and listing need Requests, with Biopython as an optional fallback. Gradient
+coloring uses Python's standard library and needs no optional packages. GUI
+dialogs require Qt support through PyMOL.
 
 ## Installation
 
@@ -131,7 +146,7 @@ Sequence-based selection helpers.
 ### Visualization — 6 commands · [full reference](docs/commands/visualization.md)
 Color palettes, group coloring, and secondary-structure coloring.
 - `color_group_with_palette` — apply an extended palette across a group
-- `color_group_with_gradient` — single-color gradient across a group (needs matplotlib)
+- `color_group_with_gradient` — single-color gradient across a group
 - `color_secondary_structure` — color helices, sheets, and loops
 
 ### Animation — 9 commands · [full reference](docs/commands/animation.md)

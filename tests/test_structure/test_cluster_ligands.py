@@ -73,7 +73,10 @@ def test_cluster_ligands_from_group_no_numpy(pymol_cmd, monkeypatch, capsys):
 # ---------------------------------------------------------------------------
 
 
-numpy = pytest.importorskip("numpy", reason="numpy not installed")
+@pytest.fixture
+def numpy_available():
+    """Skip only tests that perform clustering when numpy is absent."""
+    return pytest.importorskip("numpy", reason="numpy not installed")
 
 
 def _make_iterate_state(coords_per_obj):
@@ -92,7 +95,7 @@ def _make_iterate_state(coords_per_obj):
     return side_effect
 
 
-def test_cluster_ligands_kmeans_happy(pymol_cmd):
+def test_cluster_ligands_kmeans_happy(pymol_cmd, numpy_available):
     """K-means clustering with 4 ligands → 2 groups, each containing 2 objects."""
     pymol_cmd.get_object_list.return_value = ["l1", "l2", "l3", "l4"]
     # Two spatial clusters: l1/l2 near (0,0,0) and l3/l4 near (100,100,100)
@@ -111,7 +114,7 @@ def test_cluster_ligands_kmeans_happy(pymol_cmd):
     assert sorted(all_members) == ["l1", "l2", "l3", "l4"]
 
 
-def test_cluster_ligands_hierarchical_happy(pymol_cmd):
+def test_cluster_ligands_hierarchical_happy(pymol_cmd, numpy_available):
     pymol_cmd.get_object_list.return_value = ["a", "b", "c"]
     coords = [
         [[0.0, 0.0, 0.0]],
@@ -127,7 +130,7 @@ def test_cluster_ligands_hierarchical_happy(pymol_cmd):
     assert members == ["a", "b", "c"]
 
 
-def test_cluster_ligands_distance_happy(pymol_cmd):
+def test_cluster_ligands_distance_happy(pymol_cmd, numpy_available):
     pymol_cmd.get_object_list.return_value = ["x", "y", "z"]
     coords = [
         [[0.0, 0.0, 0.0]],
@@ -142,7 +145,9 @@ def test_cluster_ligands_distance_happy(pymol_cmd):
     assert len(result) == 2
 
 
-def test_cluster_ligands_unknown_method_returns_empty(pymol_cmd, capsys):
+def test_cluster_ligands_unknown_method_returns_empty(
+    pymol_cmd, capsys, numpy_available
+):
     pymol_cmd.get_object_list.return_value = ["a", "b"]
     coords = [[[0.0, 0.0, 0.0]], [[1.0, 0.0, 0.0]]]
     pymol_cmd.iterate_state.side_effect = _make_iterate_state(coords)
@@ -153,7 +158,7 @@ def test_cluster_ligands_unknown_method_returns_empty(pymol_cmd, capsys):
     assert "unknown" in capsys.readouterr().out.lower()
 
 
-def test_cluster_ligands_too_few_objects(pymol_cmd, capsys):
+def test_cluster_ligands_too_few_objects(pymol_cmd, capsys, numpy_available):
     # Only 1 ligand — cannot cluster
     pymol_cmd.get_object_list.return_value = ["only_one"]
     coords = [[[0.0, 0.0, 0.0]]]
@@ -165,7 +170,7 @@ def test_cluster_ligands_too_few_objects(pymol_cmd, capsys):
     assert "at least 2" in capsys.readouterr().out.lower()
 
 
-def test_cluster_ligands_from_group_delegates(pymol_cmd):
+def test_cluster_ligands_from_group_delegates(pymol_cmd, numpy_available):
     pymol_cmd.get_object_list.return_value = ["p", "q"]
     coords = [[[0.0, 0.0, 0.0]], [[100.0, 0.0, 0.0]]]
     pymol_cmd.iterate_state.side_effect = _make_iterate_state(coords)

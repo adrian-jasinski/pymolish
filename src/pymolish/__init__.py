@@ -1,8 +1,8 @@
 """PyMOLish — curated PyMOL command extension library.
 
 PyMOL discovers plugins via :func:`__init_plugin__`; importing this module is
-cheap by design — heavy dependencies are loaded lazily from inside each
-extension sub-package only when :func:`__init_plugin__` runs.
+cheap by design — optional dependencies are imported only when a command
+needs them, never during plugin initialization or command registration.
 """
 
 from __future__ import annotations
@@ -15,7 +15,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from .core.registry import CommandInfo
 
-__version__ = "0.1.3"
+__version__ = "0.1.4"
 
 _EXTENSION_SUBPACKAGE = ".extensions"
 _EXTENSION_ABSOLUTE = "pymolish.extensions"

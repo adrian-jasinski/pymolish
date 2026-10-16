@@ -210,7 +210,13 @@ def fetch_by_uniprot(
     try:
         import requests  # noqa: F401
     except ImportError:
-        plog(_TAG, "install pymolish[biopython] to use fetch_by_uniprot", "error")
+        plog(
+            _TAG,
+            "fetch_by_uniprot cannot run: requests is required but is not "
+            "installed. Install with: pip install 'pymolish[biopython]' "
+            "in PyMOL's Python environment.",
+            "error",
+        )
         return []
 
     verbose = coerce_bool(verbose)
@@ -300,7 +306,11 @@ def list_uniprot_structures(
         import requests
     except ImportError:
         plog(
-            _TAG, "install pymolish[biopython] to use list_uniprot_structures", "error"
+            _TAG,
+            "list_uniprot_structures cannot run: requests is required but is not "
+            "installed. Install with: pip install 'pymolish[biopython]' "
+            "in PyMOL's Python environment.",
+            "error",
         )
         return []
 

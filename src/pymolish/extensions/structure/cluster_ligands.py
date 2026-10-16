@@ -61,7 +61,11 @@ def _compute_centroids(object_names: list[str]) -> tuple[list[str], list[list[fl
         import numpy as np
     except ImportError:
         plog(
-            _TAG, "install pymolish[numpy] to use cluster_ligands_by_position", "error"
+            _TAG,
+            "cluster_ligands_by_position cannot run: numpy is required but is not "
+            "installed. Install with: pip install 'pymolish[numpy]' "
+            "in PyMOL's Python environment.",
+            "error",
         )
         return [], []
 
@@ -205,7 +209,11 @@ def cluster_ligands_by_position(
         import numpy as np
     except ImportError:
         plog(
-            _TAG, "install pymolish[numpy] to use cluster_ligands_by_position", "error"
+            _TAG,
+            "cluster_ligands_by_position cannot run: numpy is required but is not "
+            "installed. Install with: pip install 'pymolish[numpy]' "
+            "in PyMOL's Python environment.",
+            "error",
         )
         return {}
 
@@ -325,7 +333,13 @@ def cluster_ligands_from_group(
     try:
         import numpy  # noqa: F401
     except ImportError:
-        plog(_TAG, "install pymolish[numpy] to use cluster_ligands_from_group", "error")
+        plog(
+            _TAG,
+            "cluster_ligands_from_group cannot run: numpy is required but is not "
+            "installed. Install with: pip install 'pymolish[numpy]' "
+            "in PyMOL's Python environment.",
+            "error",
+        )
         return {}
 
     return cluster_ligands_by_position(

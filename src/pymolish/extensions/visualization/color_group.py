@@ -148,10 +148,9 @@ def color_group_with_gradient(
 ) -> dict[str, str]:
     """Color objects in a group with a gradient derived from a single base color.
 
-    Requires the ``matplotlib`` package for color space conversions (install with
-    ``pip install pymolish[matplotlib]``). The gradient is computed in HSV space
-    using colorsys from the Python standard library; matplotlib is used only for
-    named-color resolution when ``base_color`` is not a PyMOL built-in.
+    The gradient is computed in HSV space using colorsys from the Python
+    standard library. Base colors are resolved through PyMOL; no optional
+    dependencies are required.
 
     Args:
         group_or_selection: PyMOL group name or selection expression.

@@ -122,8 +122,9 @@ def search_sequence(
     except ImportError:
         plog(
             _TAG,
-            "biopython is required for search_sequence; "
-            "install with: pip install pymolish[biopython]",
+            "search_sequence cannot run: biopython is required but is not "
+            "installed. Install with: pip install 'pymolish[biopython]' "
+            "in PyMOL's Python environment.",
             "error",
         )
         return []
