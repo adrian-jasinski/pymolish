@@ -87,7 +87,11 @@ Args:
     outfile: Destination CSV path. Parent directories are created if needed.
 
 Returns:
-    Number of unique residues written (``0`` on empty or failed selection).
+    Number of unique residues written (``0`` on failure or empty selection).
+
+Notes:
+    Requires Python's standard-library ``csv`` module. If it is unavailable
+    in PyMOL's runtime, reports an error without affecting other I/O commands.
 
 Examples:
     PyMOL> export_byres_to_csv protein, residues.csv
