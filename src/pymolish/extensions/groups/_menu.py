@@ -22,8 +22,8 @@ def _sort_entry(group: str) -> list:
     objects = GroupUtils.get_group_objects(group) or []
     ascending = len(objects) > 1 and objects == sorted(objects, key=str.lower)
     reverse = 1 if ascending else 0
-    label = "sort Z→A" if ascending else "sort A→Z"
-    return [1, label, f"sort_group {group}, reverse={reverse}"]
+    # PyMOL popup menus render ASCII only, so no arrows in the label.
+    return [1, "sort", f"sort_group {group}, reverse={reverse}"]
 
 
 def pymolish_group_items(group: str) -> list[list]:

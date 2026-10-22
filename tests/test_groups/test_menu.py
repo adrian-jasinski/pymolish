@@ -27,7 +27,7 @@ def test_install_wraps_group_action(fake_menu, pymol_cmd):
     labels = [r[1] for r in rows]
     assert labels[:8] == [f"row{i}" for i in range(8)]
     assert labels[-2:] == ["row8", "row9"]
-    assert {"duplicate", "enable", "disable", "sort A→Z"} <= set(labels)
+    assert {"duplicate", "enable", "disable", "sort"} <= set(labels)
     assert [1, "duplicate", "copy_group g"] in rows
     assert [1, "enable", "group_enable g"] in rows
     assert [1, "disable", "group_disable g"] in rows
@@ -45,10 +45,10 @@ def test_install_is_idempotent(fake_menu, pymol_cmd):
 def test_sort_entry_flips_direction(pymol_cmd):
     pymol_cmd.get_type.return_value = "object:group"
     pymol_cmd.get_object_list.return_value = ["a", "b", "c"]
-    assert _menu._sort_entry("g") == [1, "sort Z→A", "sort_group g, reverse=1"]
+    assert _menu._sort_entry("g") == [1, "sort", "sort_group g, reverse=1"]
 
     pymol_cmd.get_object_list.return_value = ["c", "b", "a"]
-    assert _menu._sort_entry("g") == [1, "sort A→Z", "sort_group g, reverse=0"]
+    assert _menu._sort_entry("g") == [1, "sort", "sort_group g, reverse=0"]
 
 
 def test_install_without_pymol_menu(monkeypatch):
@@ -56,3 +56,8 @@ def test_install_without_pymol_menu(monkeypatch):
     monkeypatch.delattr(sys.modules["pymol"], "menu", raising=False)
     # plain module object with no 'menu' attribute -> ImportError path
     assert _menu.install() is False
+
+
+def test_menu_labels_are_ascii(pymol_cmd):
+    for row in _menu.pymolish_group_items("g"):
+        assert row[1].isascii(), row[1]

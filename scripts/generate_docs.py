@@ -107,7 +107,7 @@ Inside PyMOL's object panel, clicking **A** on a *group* row shows a
 | Entry | Runs |
 |-------|------|
 | duplicate | `copy_group <group>` |
-| sort A→Z / sort Z→A | `sort_group <group>, reverse=0` or `1`, flips each click |
+| sort | `sort_group <group>, reverse=0` or `1`, flips each click |
 | enable | `group_enable <group>` |
 | disable | `group_disable <group>` |
 
