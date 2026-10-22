@@ -301,3 +301,8 @@ def __init_plugin__(app: object | None = None) -> None:
     autocomplete.register(
         "extract_chains_from_group", 0, completers.group_name, "group"
     )
+
+    # Group Action (A) menu entries — see _menu.py
+    from ._menu import install as _install_menu
+
+    _install_menu()

@@ -97,6 +97,26 @@ def _render_command(info) -> str:  # noqa: ANN001 — CommandInfo kept local
     return "\n".join(lines)
 
 
+# Extra hand-written sections appended to a category page.
+CATEGORY_NOTES: dict[str, str] = {
+    "Groups": """## Group Action (A) menu
+
+Inside PyMOL's object panel, clicking **A** on a *group* row shows a
+`PyMOLish:` section (groups only; other object types are untouched):
+
+| Entry | Runs |
+|-------|------|
+| duplicate | `copy_group <group>` |
+| sort A→Z / sort Z→A | `sort_group <group>, reverse=0` or `1`, flips each click |
+| enable | `group_enable <group>` |
+| disable | `group_disable <group>` |
+
+Implemented by wrapping `pymol.menu.group_action` in
+`pymolish/extensions/groups/_menu.py`.
+""",
+}
+
+
 def _render_category(category: str, commands: list) -> str:
     """Render a whole category's Markdown file."""
     lines: list[str] = []
@@ -119,6 +139,10 @@ def _render_category(category: str, commands: list) -> str:
         lines.append("")
         for info in commands:
             lines.append(_render_command(info))
+    if category in CATEGORY_NOTES:
+        lines.append("---")
+        lines.append("")
+        lines.append(CATEGORY_NOTES[category])
     return "\n".join(lines).rstrip() + "\n"
 
 

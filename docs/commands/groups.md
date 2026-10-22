@@ -815,3 +815,20 @@ See Also:
 ```
 
 </details>
+
+---
+
+## Group Action (A) menu
+
+Inside PyMOL's object panel, clicking **A** on a *group* row shows a
+`PyMOLish:` section (groups only; other object types are untouched):
+
+| Entry | Runs |
+|-------|------|
+| duplicate | `copy_group <group>` |
+| sort A→Z / sort Z→A | `sort_group <group>, reverse=0` or `1`, flips each click |
+| enable | `group_enable <group>` |
+| disable | `group_disable <group>` |
+
+Implemented by wrapping `pymol.menu.group_action` in
+`pymolish/extensions/groups/_menu.py`.
