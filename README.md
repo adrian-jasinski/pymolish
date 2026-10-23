@@ -1,3 +1,5 @@
+<p align="center"><img src="img/logo.png" alt="PyMOLish logo" width="300"></p>
+
 # PyMOLish
 
 A curated PyMOL Open Source command extension library — organized by category, with a central command registry, standardized docs, intelligent autocompletion, and optional PyQt GUI panels.
