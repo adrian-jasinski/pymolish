@@ -15,7 +15,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from .core.registry import CommandInfo
 
-__version__ = "0.1.10"
+__version__ = "0.1.11"
 
 _EXTENSION_SUBPACKAGE = ".extensions"
 _EXTENSION_ABSOLUTE = "pymolish.extensions"
@@ -101,6 +101,7 @@ def _ensure_extensions_loaded() -> None:
 def _register_meta_commands() -> None:
     """Register the ``pymolish_*`` meta-commands exposed to PyMOL."""
     from .core.autocompletion import AutocompletionRegistry
+    from .core.deps import EXTRAS, pymolish_install_deps
     from .core.registry import CommandRegistry
 
     registry = CommandRegistry.instance()
@@ -141,6 +142,17 @@ def _register_meta_commands() -> None:
             ["pymolish_version"],
             ["meta", "version"],
         ),
+        (
+            "pymolish_install_deps",
+            pymolish_install_deps,
+            "Install optional dependencies into PyMOL's Python (pip or uv)",
+            [
+                "pymolish_install_deps",
+                "pymolish_install_deps biopython",
+                "pymolish_install_deps numpy matplotlib, dry_run=1",
+            ],
+            ["meta", "install", "dependencies"],
+        ),
     ]
 
     for name, func, description, examples, tags in meta_specs:
@@ -156,7 +168,14 @@ def _register_meta_commands() -> None:
             tags=tags,
         )
 
-    AutocompletionRegistry.instance().apply()
+    autocomplete = AutocompletionRegistry.instance()
+    autocomplete.register(
+        "pymolish_install_deps",
+        0,
+        lambda token: [n for n in [*EXTRAS, "all"] if n.startswith(token)],
+        "extra",
+    )
+    autocomplete.apply()
 
 
 def pymolish_list(category: str | None = None) -> list[str]:

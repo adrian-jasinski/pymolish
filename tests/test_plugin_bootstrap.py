@@ -40,7 +40,7 @@ def test_pymolish_categories_counts(pymol_cmd):
     assert counts == {
         "Groups": 18,
         "I/O": 7,
-        "Meta": 5,
+        "Meta": 6,
         "Selection": 1,
         "Structure": 8,
         "Visualization": 6,
@@ -63,7 +63,7 @@ def test_animation_commands_are_removed(pymol_cmd, capsys):
     }
 
     names = pymolish.pymolish_list()
-    assert len(names) == 45
+    assert len(names) == 46
     assert removed.isdisjoint(names)
     assert "== Animation ==" not in capsys.readouterr().out
     assert registry.list_commands("Animation") == []
@@ -82,7 +82,7 @@ def test_animation_commands_are_removed(pymol_cmd, capsys):
         assert removed.isdisjoint(slot)
 
     pymolish.pymolish_version()
-    assert "(45 commands loaded)" in capsys.readouterr().out
+    assert "(46 commands loaded)" in capsys.readouterr().out
 
 
 def test_pymolish_list_self_heals_when_only_meta_registered(pymol_cmd, monkeypatch):
