@@ -24,7 +24,7 @@ It is meant to replace the repetitive scripting most PyMOL users end up writing 
 
 - PyMOL Open Source
 - Python 3.10 or newer — the same interpreter PyMOL uses
-- Optional packages available through extras: `numpy`, `matplotlib`, `biopython`, `requests`, `PyQt5`
+- Optional packages available through extras: `numpy`, `matplotlib`, `biopython`, `PyQt5`
 
 Missing optional libraries do not prevent the plugin from loading or its other
 commands from running. Dependencies are checked when a command needs them. If one
@@ -59,7 +59,7 @@ Then install the package into that interpreter. Pick the extras you need:
 # Minimal — core commands only
 /path/to/pymol-python -m pip install -e .
 
-# With everything (numpy, matplotlib, biopython, requests, PyQt5)
+# With everything (numpy, matplotlib, biopython, PyQt5)
 /path/to/pymol-python -m pip install -e ".[all]"
 
 # Just what you need

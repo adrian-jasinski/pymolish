@@ -53,8 +53,6 @@ def test_commands_remain_available_without_optional_dependencies():
             ('cluster_ligands_by_position', 'ligands', 'numpy', 'numpy', {}),
             ('cluster_ligands_from_group', 'ligands', 'numpy', 'numpy', {}),
             ('search_sequence', 'ACDEF', 'biopython', 'biopython', []),
-            ('fetch_by_uniprot', 'P04637', 'requests', 'biopython', []),
-            ('list_uniprot_structures', 'P04637', 'requests', 'biopython', []),
         ]
         for name, argument, package, extra, empty in cases:
             cmd.reset_mock()

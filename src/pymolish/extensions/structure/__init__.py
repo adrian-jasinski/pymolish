@@ -127,7 +127,7 @@ def __init_plugin__(app: object | None = None) -> None:
         category=CATEGORY,
         description=(
             "Fetch PDB structures for a UniProt accession via RCSB/UniProt APIs "
-            "(requires requests)"
+            "(biopython optional)"
         ),
         examples=[
             "fetch_by_uniprot P04637",
@@ -144,7 +144,7 @@ def __init_plugin__(app: object | None = None) -> None:
         category=CATEGORY,
         description=(
             "List PDB structures for a UniProt accession without loading them "
-            "(requires requests)"
+            "(biopython optional)"
         ),
         examples=[
             "list_uniprot_structures P04637",

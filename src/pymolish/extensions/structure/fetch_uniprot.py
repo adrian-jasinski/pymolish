@@ -1,11 +1,13 @@
 """Fetch PDB structures by UniProt accession from public APIs.
 
-Heavy dependencies: **requests** (primary / fallback) and **biopython**
-(secondary fallback).  Both are gated inside functions.  Install with
-``pip install pymolish[biopython]`` which also pulls in ``requests``.
+HTTP uses the stdlib only.  **biopython** is an optional last-resort
+fallback (ExPASy); when it is missing that step is skipped.
 """
 
 from __future__ import annotations
+
+import json
+import urllib.request
 
 from pymol import cmd
 
@@ -17,8 +19,30 @@ _TAG = "structure.fetch_uniprot"
 
 
 # ---------------------------------------------------------------------------
-# Internal search helpers — each gated on its own import
+# Internal search helpers
 # ---------------------------------------------------------------------------
+
+
+def _http_json(url: str, payload: dict | None = None, timeout: int = 30) -> dict:
+    """GET *url* (or POST *payload* as JSON) and return the decoded JSON body.
+
+    Args:
+        url: Endpoint URL.
+        payload: When given, sent as a JSON POST body.
+        timeout: Socket timeout in seconds.
+
+    Returns:
+        Decoded JSON response.
+
+    Raises:
+        urllib.error.URLError: On network or non-2xx HTTP errors.
+    """
+    data = None if payload is None else json.dumps(payload).encode()
+    req = urllib.request.Request(
+        url, data=data, headers={"Content-Type": "application/json"}
+    )
+    with urllib.request.urlopen(req, timeout=timeout) as resp:
+        return json.load(resp)
 
 
 def _search_rcsb_graphql(uniprot_id: str, verbose: bool) -> list[str]:
@@ -32,15 +56,9 @@ def _search_rcsb_graphql(uniprot_id: str, verbose: bool) -> list[str]:
         Sorted, deduplicated list of uppercase PDB IDs, or ``[]`` on failure.
 
     Raises:
-        ImportError: When *requests* is not installed.
-        RuntimeError: When the HTTP request or GraphQL response is invalid.
+        urllib.error.URLError: When the HTTP request fails.
+        RuntimeError: When the GraphQL response reports errors.
     """
-    try:
-        import requests
-    except ImportError:
-        plog(_TAG, "install pymolish[biopython] to use fetch_by_uniprot", "error")
-        raise
-
     if verbose:
         plog(_TAG, "trying RCSB PDB GraphQL API…")
 
@@ -53,15 +71,10 @@ def _search_rcsb_graphql(uniprot_id: str, verbose: bool) -> list[str]:
         ) { entry { id } }
     }
     """
-    resp = requests.post(
+    data = _http_json(
         "https://data.rcsb.org/graphql",
-        json={"query": query, "variables": {"uid": uniprot_id}},
-        headers={"Content-Type": "application/json"},
-        timeout=30,
+        {"query": query, "variables": {"uid": uniprot_id}},
     )
-    if resp.status_code != 200:
-        raise RuntimeError(f"GraphQL request failed with status {resp.status_code}")
-    data = resp.json()
     if "errors" in data:
         raise RuntimeError(f"GraphQL errors: {data['errors']}")
     entities = (data.get("data") or {}).get("polymer_entities") or []
@@ -82,25 +95,12 @@ def _search_uniprot_rest(uniprot_id: str, verbose: bool) -> list[str]:
         List of uppercase PDB IDs, or ``[]`` on failure.
 
     Raises:
-        ImportError: When *requests* is not installed.
-        RuntimeError: When the HTTP request fails.
+        urllib.error.URLError: When the HTTP request fails.
     """
-    try:
-        import requests
-    except ImportError:
-        plog(_TAG, "install pymolish[biopython] to use fetch_by_uniprot", "error")
-        raise
-
     if verbose:
         plog(_TAG, "trying UniProt REST API…")
 
-    resp = requests.get(
-        f"https://rest.uniprot.org/uniprotkb/{uniprot_id}.json",
-        timeout=30,
-    )
-    if resp.status_code != 200:
-        raise RuntimeError(f"UniProt API failed with status {resp.status_code}")
-    data = resp.json()
+    data = _http_json(f"https://rest.uniprot.org/uniprotkb/{uniprot_id}.json")
     pdb_ids = [
         ref["id"].upper()
         for ref in data.get("uniProtKBCrossReferences", [])
@@ -118,18 +118,24 @@ def _search_biopython(uniprot_id: str, verbose: bool) -> list[str]:
         uniprot_id: UniProt accession string.
         verbose: When truthy, log progress.
 
+    Optional: when Biopython is not installed, the step is skipped with an
+    informational note instead of failing.
+
     Returns:
-        List of uppercase PDB IDs, or ``[]`` on failure.
+        List of uppercase PDB IDs, or ``[]`` when Biopython is missing.
 
     Raises:
-        ImportError: When *biopython* is not installed.
         RuntimeError: On any retrieval error.
     """
     try:
         from Bio import ExPASy, SwissProt
     except ImportError:
-        plog(_TAG, "install pymolish[biopython] to use fetch_by_uniprot", "error")
-        raise
+        plog(
+            _TAG,
+            "biopython not installed - skipping ExPASy fallback "
+            "(optional: pip install 'pymolish[biopython]')",
+        )
+        return []
 
     if verbose:
         plog(_TAG, "trying Biopython ExPASy fallback…")
@@ -185,8 +191,8 @@ def fetch_by_uniprot(
     Biopython) and loads up to *max_structures* PDB entries via
     :pymol:`fetch`.
 
-    Requires **requests** (and optionally **biopython**) — install with
-    ``pip install pymolish[biopython]``.
+    No extra packages required; **biopython** (``pymolish[biopython]``) adds
+    an optional ExPASy fallback that is skipped when absent.
 
     Args:
         uniprot_id: UniProt accession ID (e.g. ``"P04637"``).
@@ -207,18 +213,6 @@ def fetch_by_uniprot(
     See Also:
         list_uniprot_structures
     """
-    try:
-        import requests  # noqa: F401
-    except ImportError:
-        plog(
-            _TAG,
-            "fetch_by_uniprot cannot run: requests is required but is not "
-            "installed. Install with: pip install 'pymolish[biopython]' "
-            "in PyMOL's Python environment.",
-            "error",
-        )
-        return []
-
     verbose = coerce_bool(verbose)
     uniprot_id = _clean(uniprot_id).upper()
     max_structures = int(max_structures)
@@ -280,8 +274,8 @@ def list_uniprot_structures(
     Queries the same search backends as :func:`fetch_by_uniprot` and prints
     the found PDB IDs with optional per-entry metadata from the RCSB REST API.
 
-    Requires **requests** (and optionally **biopython**) — install with
-    ``pip install pymolish[biopython]``.
+    No extra packages required; **biopython** (``pymolish[biopython]``) adds
+    an optional ExPASy fallback that is skipped when absent.
 
     Args:
         uniprot_id: UniProt accession ID (e.g. ``"P04637"``).
@@ -302,18 +296,6 @@ def list_uniprot_structures(
     See Also:
         fetch_by_uniprot
     """
-    try:
-        import requests
-    except ImportError:
-        plog(
-            _TAG,
-            "list_uniprot_structures cannot run: requests is required but is not "
-            "installed. Install with: pip install 'pymolish[biopython]' "
-            "in PyMOL's Python environment.",
-            "error",
-        )
-        return []
-
     show_details = coerce_bool(show_details)
     uniprot_id = _clean(uniprot_id).upper()
 
@@ -333,19 +315,16 @@ def list_uniprot_structures(
     if show_details:
         for pdb_id in pdb_ids:
             try:
-                info_url = f"https://data.rcsb.org/rest/v1/core/entry/{pdb_id}"
-                resp = requests.get(info_url, timeout=10)
-                if resp.status_code == 200:
-                    data = resp.json()
-                    title = data.get("struct", {}).get("title", "No title")
-                    resolution = data.get("rcsb_entry_info", {}).get(
-                        "resolution_combined", "N/A"
-                    )
-                    method = (data.get("exptl") or [{}])[0].get("method", "Unknown")
-                    short_title = title[:60] + ("…" if len(title) > 60 else "")
-                    plog(_TAG, f"  {pdb_id}: {short_title} [{method}, {resolution} Å]")
-                else:
-                    plog(_TAG, f"  {pdb_id}: (details unavailable)")
+                data = _http_json(
+                    f"https://data.rcsb.org/rest/v1/core/entry/{pdb_id}", timeout=10
+                )
+                title = data.get("struct", {}).get("title", "No title")
+                resolution = data.get("rcsb_entry_info", {}).get(
+                    "resolution_combined", "N/A"
+                )
+                method = (data.get("exptl") or [{}])[0].get("method", "Unknown")
+                short_title = title[:60] + ("…" if len(title) > 60 else "")
+                plog(_TAG, f"  {pdb_id}: {short_title} [{method}, {resolution} Å]")
             except Exception:  # noqa: BLE001
                 plog(_TAG, f"  {pdb_id}: (details unavailable)")
     else:

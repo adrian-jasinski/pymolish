@@ -6,9 +6,9 @@ _8 command(s). Generated from the command registry — do not edit by hand._
 
 - [`cluster_ligands_by_position`](#cluster_ligands_by_position) — Cluster ligands by 3-D centroid into new PyMOL groups (requires numpy)
 - [`cluster_ligands_from_group`](#cluster_ligands_from_group) — Cluster ligands from a named PyMOL group (requires numpy)
-- [`fetch_by_uniprot`](#fetch_by_uniprot) — Fetch PDB structures for a UniProt accession via RCSB/UniProt APIs (requires requests)
+- [`fetch_by_uniprot`](#fetch_by_uniprot) — Fetch PDB structures for a UniProt accession via RCSB/UniProt APIs (biopython optional)
 - [`list_objects_with_prefix`](#list_objects_with_prefix) — List PyMOL objects whose names start with a given prefix
-- [`list_uniprot_structures`](#list_uniprot_structures) — List PDB structures for a UniProt accession without loading them (requires requests)
+- [`list_uniprot_structures`](#list_uniprot_structures) — List PDB structures for a UniProt accession without loading them (biopython optional)
 - [`multialign`](#multialign) — Align multiple structures to a reference and report RMSD statistics
 - [`remove_ions`](#remove_ions) — Remove common small ions from a PyMOL selection
 - [`remove_metals`](#remove_metals) — Remove common metal atoms from a PyMOL selection
@@ -124,7 +124,7 @@ See Also:
 
 ### `fetch_by_uniprot`
 
-Fetch PDB structures for a UniProt accession via RCSB/UniProt APIs (requires requests)
+Fetch PDB structures for a UniProt accession via RCSB/UniProt APIs (biopython optional)
 
 - **Usage:** `fetch_by_uniprot <uniprot_id> [max_structures=10] [verbose=True]`
 - **Since:** 1.0.0
@@ -148,8 +148,8 @@ Tries three search strategies in order (RCSB GraphQL → UniProt REST →
 Biopython) and loads up to *max_structures* PDB entries via
 :pymol:`fetch`.
 
-Requires **requests** (and optionally **biopython**) — install with
-``pip install pymolish[biopython]``.
+No extra packages required; **biopython** (``pymolish[biopython]``) adds
+an optional ExPASy fallback that is skipped when absent.
 
 Args:
     uniprot_id: UniProt accession ID (e.g. ``"P04637"``).
@@ -217,7 +217,7 @@ See Also:
 
 ### `list_uniprot_structures`
 
-List PDB structures for a UniProt accession without loading them (requires requests)
+List PDB structures for a UniProt accession without loading them (biopython optional)
 
 - **Usage:** `list_uniprot_structures <uniprot_id> [show_details=True]`
 - **Since:** 1.0.0
@@ -240,8 +240,8 @@ List PDB structures for a UniProt accession without loading them.
 Queries the same search backends as :func:`fetch_by_uniprot` and prints
 the found PDB IDs with optional per-entry metadata from the RCSB REST API.
 
-Requires **requests** (and optionally **biopython**) — install with
-``pip install pymolish[biopython]``.
+No extra packages required; **biopython** (``pymolish[biopython]``) adds
+an optional ExPASy fallback that is skipped when absent.
 
 Args:
     uniprot_id: UniProt accession ID (e.g. ``"P04637"``).
