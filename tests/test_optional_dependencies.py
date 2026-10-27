@@ -46,7 +46,7 @@ def test_commands_remain_available_without_optional_dependencies():
         assert not attempts, attempts
         assert not output.getvalue(), output.getvalue()
         registry = CommandRegistry.instance()
-        assert len(registry) == 46, len(registry)
+        assert len(registry) == 48, len(registry)
         assert len(registry.categories()) == 6
 
         cases = [
