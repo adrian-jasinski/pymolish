@@ -1,12 +1,60 @@
 # Selection
 
-_1 command(s). Generated from the command registry — do not edit by hand._
+_3 command(s). Generated from the command registry — do not edit by hand._
 
 ## Commands in this category
 
+- [`ions`](#ions) — Select common ions (NA, CL, MG, ...), or 'on'/'off' to show/hide them
 - [`search_sequence`](#search_sequence) — Search for amino acid sequences in loaded structures using alignment
+- [`water`](#water) — Select water (solvent), or 'on'/'off' to show/hide it
 
 ---
+
+### `ions`
+
+Select common ions (NA, CL, MG, ...), or 'on'/'off' to show/hide them
+
+- **Usage:** `ions [mode='']`
+- **Since:** 0.1.12
+- **Tags:** `selection`, `solvent`, `ions`
+- **See also:** `water`
+
+**Examples:**
+
+```
+ions
+ions on
+ions off
+```
+
+<details><summary>Full docstring</summary>
+
+```
+Select common ions (NA, CL, MG, CA, ZN, ...), or show/hide them.
+
+With no argument creates a selection named ``ions`` (or ``ions1``,
+``ions2``, ... if the name is taken) matching popular ion residue names.
+
+Args:
+    mode: ``""`` to create a selection, ``"on"`` to show ions as lines,
+        ``"off"`` to hide them.
+
+Returns:
+    Name of the created selection, or ``""`` for on/off modes.
+
+Examples:
+    PyMOL> ions
+    PyMOL> ions on
+    PyMOL> ions off
+
+Since:
+    0.1.12
+
+See Also:
+    water
+```
+
+</details>
 
 ### `search_sequence`
 
@@ -57,6 +105,52 @@ Since:
 
 See Also:
     pymolish_list, pymolish_search
+```
+
+</details>
+
+### `water`
+
+Select water (solvent), or 'on'/'off' to show/hide it
+
+- **Usage:** `water [mode='']`
+- **Since:** 0.1.12
+- **Tags:** `selection`, `solvent`, `water`
+- **See also:** `ions`
+
+**Examples:**
+
+```
+water
+water on
+water off
+```
+
+<details><summary>Full docstring</summary>
+
+```
+Select water molecules, or show/hide them.
+
+With no argument creates a selection named ``water`` (or ``water1``,
+``water2``, ... if the name is taken) from ``solvent``.
+
+Args:
+    mode: ``""`` to create a selection, ``"on"`` to ``show lines, solvent``,
+        ``"off"`` to ``hide everything, solvent``.
+
+Returns:
+    Name of the created selection, or ``""`` for on/off modes.
+
+Examples:
+    PyMOL> water
+    PyMOL> water on
+    PyMOL> water off
+
+Since:
+    0.1.12
+
+See Also:
+    ions
 ```
 
 </details>

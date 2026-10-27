@@ -12,6 +12,7 @@ CATEGORY = Category.SELECTION
 def __init_plugin__(app: object | None = None) -> None:
     """Register selection commands and their autocompletions."""
     from .sequence_search import search_sequence
+    from .solvent import ions, water
 
     registry = CommandRegistry.instance()
     autocomplete = AutocompletionRegistry.instance()
@@ -32,5 +33,25 @@ def __init_plugin__(app: object | None = None) -> None:
         tags=["sequence", "alignment", "search", "biopython"],
         see_also=["pymolish_list", "pymolish_search"],
     )
+
+    for name, func, desc in (
+        ("water", water, "Select water (solvent), or 'on'/'off' to show/hide it"),
+        (
+            "ions",
+            ions,
+            "Select common ions (NA, CL, MG, ...), or 'on'/'off' to show/hide them",
+        ),
+    ):
+        registry.register(
+            name,
+            func,
+            category=CATEGORY,
+            description=desc,
+            examples=[name, f"{name} on", f"{name} off"],
+            tags=["selection", "solvent", name],
+            see_also=["water" if name == "ions" else "ions"],
+            since="0.1.12",
+        )
+        autocomplete.register(name, 0, lambda _prefix: ["on", "off"], "mode")
 
     autocomplete.register("search_sequence", 0, completers.object_name, "sequence")

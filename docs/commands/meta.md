@@ -18,7 +18,7 @@ _6 command(s). Generated from the command registry — do not edit by hand._
 List categories with command counts
 
 - **Usage:** `pymolish_categories`
-- **Since:** 0.1.11
+- **Since:** 0.1.12
 - **Tags:** `meta`, `discovery`
 
 **Examples:**
@@ -40,7 +40,7 @@ Print each category with the number of commands it contains.
 Print detailed help for a registered command
 
 - **Usage:** `pymolish_help <name>`
-- **Since:** 0.1.11
+- **Since:** 0.1.12
 - **Tags:** `meta`, `help`
 
 **Examples:**
@@ -68,7 +68,7 @@ Returns:
 Install optional dependencies into PyMOL's Python (pip or uv)
 
 - **Usage:** `pymolish_install_deps [extras='all'] [dry_run=False]`
-- **Since:** 0.1.11
+- **Since:** 0.1.12
 - **Tags:** `meta`, `install`, `dependencies`
 
 **Examples:**
@@ -116,7 +116,7 @@ See Also:
 List all registered commands, optionally filtered by category
 
 - **Usage:** `pymolish_list [category=None]`
-- **Since:** 0.1.11
+- **Since:** 0.1.12
 - **Tags:** `meta`, `discovery`
 
 **Examples:**
@@ -142,7 +142,7 @@ Returns:
 Search commands by name, description, or tags
 
 - **Usage:** `pymolish_search <term>`
-- **Since:** 0.1.11
+- **Since:** 0.1.12
 - **Tags:** `meta`, `search`
 
 **Examples:**
@@ -165,7 +165,7 @@ Search registered commands by ``term`` across names, descriptions, tags.
 Show pymolish version and number of loaded commands
 
 - **Usage:** `pymolish_version`
-- **Since:** 0.1.11
+- **Since:** 0.1.12
 - **Tags:** `meta`, `version`
 
 **Examples:**
