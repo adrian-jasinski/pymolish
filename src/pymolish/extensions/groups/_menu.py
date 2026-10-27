@@ -13,7 +13,9 @@ from collections.abc import Callable
 
 from ...core.group_utils import GroupUtils
 
-_SEP: list = [0, "", ""]
+# PyMOL colours menu labels with a leading ``\\RGB`` escape (digits 0-9);
+# the stock menu uses ``\\933`` (red) for "delete group".
+BLUE = r"\359"
 
 
 def _sort_entry(group: str) -> list:
@@ -23,23 +25,25 @@ def _sort_entry(group: str) -> list:
     ascending = len(objects) > 1 and objects == sorted(objects, key=str.lower)
     reverse = 1 if ascending else 0
     # PyMOL popup menus render ASCII only, so no arrows in the label.
-    return [1, "sort", f"sort_group {group}, reverse={reverse}"]
+    return [1, BLUE + "sort group", f"sort_group {group}, reverse={reverse}"]
 
 
 def pymolish_group_items(group: str) -> list[list]:
     """Return the menu rows appended to the group Action menu."""
     return [
-        _SEP,
-        [2, "PyMOLish:", ""],
-        [1, "duplicate", f"copy_group {group}"],
+        [1, BLUE + "duplicate group", f"copy_group {group}"],
         _sort_entry(group),
-        [1, "enable", f"group_enable {group}"],
-        [1, "disable", f"group_disable {group}"],
+        [1, BLUE + "enable group", f"group_enable {group}"],
+        [1, BLUE + "disable group", f"group_disable {group}"],
     ]
 
 
-# Rows 0-7 of the stock menu are the zoom/orient/center/origin/drag/reset block.
-_INSERT_AT = 8
+def _insert_at(items: list) -> int:
+    """Index just after PyMOL's own ``delete group`` row (fallback: row 8)."""
+    for i, row in enumerate(items):
+        if str(row[1]).endswith("delete group"):
+            return i + 1
+    return 8
 
 
 def install() -> bool:
@@ -56,7 +60,8 @@ def install() -> bool:
 
     def group_action(self_cmd: object, sele: str) -> list:
         items = list(original(self_cmd, sele))
-        return items[:_INSERT_AT] + pymolish_group_items(sele) + items[_INSERT_AT:]
+        at = _insert_at(items)
+        return items[:at] + pymolish_group_items(sele) + items[at:]
 
     group_action._pymolish = True  # type: ignore[attr-defined]
     group_action._original = original  # type: ignore[attr-defined]

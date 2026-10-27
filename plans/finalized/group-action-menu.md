@@ -150,3 +150,11 @@ Notes
   whatever is there at install time).
 - Skipped: a Qt context-menu variant and a user-configurable item list. Add only if
   someone asks.
+
+## Update 2026-10-27 (v0.1.13)
+
+Entries moved next to PyMOL's own `rename group` / `group` / `delete group` rows
+(inserted right after `delete group`, found by label; fallback row 8). Labels are
+blue (`\359` escape, same mechanism as the stock red `\933delete group`) and read
+`duplicate group`, `sort group`, `enable group`, `disable group`. The separate
+"PyMOLish:" header and separator were dropped.

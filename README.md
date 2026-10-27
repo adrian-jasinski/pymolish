@@ -138,52 +138,20 @@ export_group mystructures, format=cif, outdir=/data/out
 pymolish_list
 pymolish_help color_group_with_palette
 ```
+## Commands
 
-## Commands Overview
+[Command reference](docs/commands/README.md) — full auto-generated reference for all commands
 
-Six categories, 46 commands. Each category below lists a few highlights; follow the reference link for the full list with arguments, examples, and see-also.
+### Categories
 
-### I/O — 7 commands · [full reference](docs/commands/i_o.md)
-Batch-load structure files and export groups to CIF, PDB, FASTA, or CSV.
-- `load_files` — load all structures from a directory into a group
-- `export_group` — export every object in a group to a chosen format
-- `export_byres_to_csv` — dump per-residue data to CSV
+- [Groups](groups.md) — 18 command(s) - Batch-load structure files and export groups to CIF, PDB, FASTA, or CSV. 
 
-### Groups — 18 commands · [full reference](docs/commands/groups.md)
-Manipulate PyMOL object groups: toggle visibility, navigate, sort, copy, merge, extract chains.
-- `group_toggle` — toggle visibility of objects in a group
-- `group_next` / `group_previous` — step through group members one at a time
-- `merge_to_group` — merge a structure into every object in a group
-
-### Structure — 8 commands · [full reference](docs/commands/structure.md)
-Multi-alignment, cleanup, ligand clustering, and UniProt fetch.
-- `multialign` — align multiple structures and report RMSD
-- `cluster_ligands_by_position` — cluster ligands by 3D centroid (kmeans / hierarchical / distance)
-- `fetch_by_uniprot` — fetch PDB entries for a UniProt accession
-
-### Selection — 1 command · [full reference](docs/commands/selection.md)
-Sequence-based selection helpers.
-- `search_sequence` — find residues matching an amino-acid sequence via alignment
-
-### Visualization — 6 commands · [full reference](docs/commands/visualization.md)
-Color palettes, group coloring, and secondary-structure coloring.
-- `color_group_with_palette` — apply an extended palette across a group
-- `color_group_with_gradient` — single-color gradient across a group
-- `color_secondary_structure` — color helices, sheets, and loops
-
-### Meta — 6 commands · [full reference](docs/commands/meta.md)
-Discovery, help, and dependency setup, always available.
-- `pymolish_list` — list commands by category
-- `pymolish_help` — detailed help for a command
-- `pymolish_search` — search by name, description, or tag
-- `pymolish_install_deps` — install optional dependencies into PyMOL's Python
-
-## Documentation
-
-- [Command reference](docs/commands/README.md) — full auto-generated reference for all 46 commands
-- [ARCHITECTURE_PLAN.md](ARCHITECTURE_PLAN.md) — design decisions, patterns, docstring template
-- [CLAUDE.md](CLAUDE.md) — project conventions (useful if you plan to contribute)
+- [I/O](i_o.md) — 7 command(s) - Manipulate PyMOL object groups: toggle visibility, navigate, sort, copy, merge, extract chains.
+- [Meta](meta.md) — 6 command(s) - Discovery, help, and dependency setup, always available.
+- [Selection](selection.md) — 3 command(s) - selection helpers, show/hide/select water/ions etc.
+- [Structure](structure.md) — 8 command(s) - Multi-alignment, cleanup, ligand clustering, and UniProt fetch.
+- [Visualization](visualization.md) — 6 command(s) - Color palettes, group coloring, and secondary-structure coloring.
 
 ## License
 
-BSD-2-Clause — see [LICENSE](LICENSE).
+MIT — see [LICENSE](LICENSE).
