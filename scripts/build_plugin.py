@@ -1,15 +1,30 @@
-"""Build plugin/pymolish.zip with ``python scripts/build_plugin.py``."""
+"""Build plugin/pymolish.zip with ``python scripts/build_plugin.py``.
 
+Pass ``--versioned`` to name the archive after the package version instead,
+e.g. ``plugin/pymolish_0_1_14.zip``.
+"""
+
+import argparse
+import re
 from pathlib import Path
 from zipfile import ZIP_DEFLATED, ZipFile
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 
 
-def main() -> None:
+def package_version() -> str:
+    """Read ``__version__`` from the package without importing it (no pymol needed)."""
+    text = (REPO_ROOT / "src" / "pymolish" / "__init__.py").read_text()
+    return re.search(r'^__version__ = "([^"]+)"', text, re.M).group(1)
+
+
+def main(versioned: bool = False) -> None:
     """Archive the package for installation through PyMOL's Plugin Manager."""
     source = REPO_ROOT / "src" / "pymolish"
-    destination = REPO_ROOT / "plugin" / "pymolish.zip"
+    name = "pymolish"
+    if versioned:
+        name += "_" + package_version().replace(".", "_")
+    destination = REPO_ROOT / "plugin" / f"{name}.zip"
     destination.parent.mkdir(parents=True, exist_ok=True)
 
     with ZipFile(destination, "w", compression=ZIP_DEFLATED) as archive:
@@ -26,4 +41,10 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--versioned",
+        action="store_true",
+        help="name the archive pymolish_<major>_<minor>_<patch>.zip",
+    )
+    main(parser.parse_args().versioned)
