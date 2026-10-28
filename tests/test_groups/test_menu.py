@@ -25,9 +25,10 @@ def test_install_wraps_group_action(fake_menu, pymol_cmd):
     assert _menu.install() is True
     rows = fake_menu.group_action(None, "g")
     labels = [r[1] for r in rows]
-    # inserted directly after PyMOL's "delete group" row
-    assert labels[5] == r"\933delete group"
-    assert labels[6] == _menu.BLUE + "duplicate group"
+    # inserted directly before PyMOL's "delete group" row, which stays last
+    assert labels[5] == _menu.BLUE + "duplicate group"
+    assert labels[8] == _menu.BLUE + "disable group"
+    assert labels[9] == r"\933delete group"
     assert labels[-4:] == ["row6", "row7", "row8", "row9"]
     assert [1, _menu.BLUE + "duplicate group", "copy_group g"] in rows
     assert [1, _menu.BLUE + "enable group", "group_enable g"] in rows

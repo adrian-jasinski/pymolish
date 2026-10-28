@@ -39,10 +39,10 @@ def pymolish_group_items(group: str) -> list[list]:
 
 
 def _insert_at(items: list) -> int:
-    """Index just after PyMOL's own ``delete group`` row (fallback: row 8)."""
+    """Index of PyMOL's own ``delete group`` row, so it stays last (fallback: 8)."""
     for i, row in enumerate(items):
         if str(row[1]).endswith("delete group"):
-            return i + 1
+            return i
     return 8
 
 
