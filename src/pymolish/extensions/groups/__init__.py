@@ -2,11 +2,17 @@
 
 from __future__ import annotations
 
+from pymol import cmd
+
 from ...core.autocompletion import AutocompletionRegistry
+from ...core.logging import plog
 from ...core.registry import CommandRegistry
 from ...core.types import Category
 
 CATEGORY = Category.GROUPS
+
+# Free in PyMOL's default map (shortcut_dict, reserved_keys, Qt menus).
+KEY_BINDINGS = {"CTRL-N": "group_next", "CTRL-P": "group_previous"}
 
 
 def __init_plugin__(app: object | None = None) -> None:
@@ -306,3 +312,10 @@ def __init_plugin__(app: object | None = None) -> None:
     from ._menu import install as _install_menu
 
     _install_menu()
+
+    # ------------------------------------------------------------ key bindings
+    for key, name in KEY_BINDINGS.items():
+        try:
+            cmd.set_key(key, name)
+        except Exception as exc:  # noqa: BLE001
+            plog("groups", f"could not bind {key} to {name}: {exc}", "warn")

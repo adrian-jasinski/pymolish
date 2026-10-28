@@ -15,7 +15,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from .core.registry import CommandInfo
 
-__version__ = "0.1.13"
+__version__ = "0.1.14"
 
 _EXTENSION_SUBPACKAGE = ".extensions"
 _EXTENSION_ABSOLUTE = "pymolish.extensions"

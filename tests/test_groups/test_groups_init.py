@@ -102,3 +102,15 @@ def test_init_plugin_is_idempotent_with_registry_reset(pymol_cmd):
     __init_plugin__(None)
     registry = CommandRegistry.instance()
     assert registry.get("group_enable") is not None
+
+
+def test_init_plugin_binds_navigation_keys(pymol_cmd):
+    __init_plugin__(None)
+    bound = {c.args[0]: c.args[1] for c in pymol_cmd.set_key.call_args_list}
+    assert bound["CTRL-N"] == "group_next"
+    assert bound["CTRL-P"] == "group_previous"
+
+
+def test_init_plugin_survives_set_key_failure(pymol_cmd):
+    pymol_cmd.set_key.side_effect = RuntimeError("no gui")
+    __init_plugin__(None)  # must not raise

@@ -390,6 +390,7 @@ See Also:
 Show the next object in a group (one at a time)
 
 - **Usage:** `group_next [group_name='']`
+- **Key binding:** `CTRL-N`
 - **Since:** 1.0.0
 - **Tags:** `group`, `navigate`, `next`
 - **See also:** `group_previous`, `group_enable`, `group_disable`
@@ -436,6 +437,7 @@ See Also:
 Show the previous object in a group (one at a time)
 
 - **Usage:** `group_previous [group_name='']`
+- **Key binding:** `CTRL-P`
 - **Since:** 1.0.0
 - **Tags:** `group`, `navigate`, `previous`
 - **See also:** `group_next`, `group_enable`, `group_disable`

@@ -126,7 +126,7 @@ load_files /data/pdbs, group=mystructures
 group_info mystructures
 
 # Cycle through the objects one at a time
-group_next mystructures
+group_next mystructures   # or press CTRL-N / CTRL-P
 
 # Color the whole group with a perceptual palette
 color_group_with_palette mystructures, palette=viridis
