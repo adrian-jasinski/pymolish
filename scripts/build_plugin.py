@@ -35,7 +35,14 @@ def main(versioned: bool = True) -> None:
                 and "__pycache__" not in relative.parts
                 and path.suffix not in {".pyc", ".pyo"}
             ):
-                archive.write(path, relative)
+                if relative == Path("pymolish/__init__.py"):
+                    # PyMOL's Plugin Manager reads "# Key: value" comment lines
+                    # at the top of __init__.py, so it can show the version
+                    # without importing the package.
+                    header = f"# Name: pymolish\n# Version: {version}\n"
+                    archive.writestr(str(relative), header + path.read_text())
+                else:
+                    archive.write(path, relative)
         # ZIP installs have no package metadata; stamp the version in.
         archive.writestr("pymolish/_version.py", f'__version__ = "{version}"\n')
 

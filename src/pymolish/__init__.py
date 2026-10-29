@@ -19,20 +19,22 @@ if TYPE_CHECKING:
 def _read_version() -> str:
     """Single source of truth is pyproject.toml.
 
-    Installed via pip/uv -> package metadata.  Installed from the plugin ZIP
-    -> ``_version.py`` stamped by ``scripts/build_plugin.py``.
+    Installed from the plugin ZIP -> ``_version.py`` stamped by
+    ``scripts/build_plugin.py`` (checked first: a stale pip install of an
+    older version in PyMOL's Python must not shadow the ZIP's version).
+    Installed via pip/uv -> package metadata.
     """
-    try:
-        from importlib.metadata import version
-
-        return version("pymolish")
-    except Exception:  # noqa: BLE001 - PackageNotFoundError or odd envs
-        pass
     try:
         from ._version import __version__ as stamped
 
         return stamped
     except ImportError:
+        pass
+    try:
+        from importlib.metadata import version
+
+        return version("pymolish")
+    except Exception:  # noqa: BLE001 - PackageNotFoundError or odd envs
         return "0+unknown"
 
 
