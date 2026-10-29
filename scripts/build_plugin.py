@@ -1,7 +1,6 @@
-"""Build plugin/pymolish.zip with ``python scripts/build_plugin.py``.
+"""Build plugin/pymolish_<x>_<y>_<z>.zip with ``python scripts/build_plugin.py``.
 
-Pass ``--versioned`` to name the archive after the package version instead,
-e.g. ``plugin/pymolish_0_1_14.zip``.
+Pass ``--unversioned`` to write plain ``plugin/pymolish.zip`` instead.
 """
 
 import argparse
@@ -18,7 +17,7 @@ def package_version() -> str:
     return re.search(r'^version = "([^"]+)"', text, re.M).group(1)
 
 
-def main(versioned: bool = False) -> None:
+def main(versioned: bool = True) -> None:
     """Archive the package for installation through PyMOL's Plugin Manager."""
     source = REPO_ROOT / "src" / "pymolish"
     version = package_version()
@@ -46,8 +45,8 @@ def main(versioned: bool = False) -> None:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
-        "--versioned",
+        "--unversioned",
         action="store_true",
-        help="name the archive pymolish_<major>_<minor>_<patch>.zip",
+        help="name the archive plain pymolish.zip",
     )
-    main(parser.parse_args().versioned)
+    main(not parser.parse_args().unversioned)

@@ -84,10 +84,10 @@ Build the plugin ZIP from a source checkout:
 python scripts/build_plugin.py
 ```
 
-This creates `plugin/pymolish.zip` from `src/pymolish/`, excluding Python caches
-and bytecode. Run it again after source changes to replace the archive. Add
-`--versioned` to name it after the package version instead, e.g.
-`plugin/pymolish_0_1_14.zip`. Install
+This creates `plugin/pymolish_<x>_<y>_<z>.zip` (e.g. `plugin/pymolish_0_1_17.zip`)
+from `src/pymolish/`, excluding Python caches and bytecode. Run it again after
+source changes to replace the archive. Add `--unversioned` to write plain
+`plugin/pymolish.zip` instead. Install
 the ZIP through Plugin Manager → Install New Plugin → Choose file.
 
 **Recommended — Plugin Manager GUI:**
