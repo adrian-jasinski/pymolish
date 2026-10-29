@@ -77,7 +77,7 @@ Rules:
 
 - After modifying command modules or registry -> update `docs/commands/` with current commands, options, and usage examples
 - After adding/removing commands -> update autocompletion registrations in the category's `__init__.py`
-- Commit work when code changes are complete
+- Do not commit work when code changes are complete
 - New command modules go in the appropriate `src/pymolish/extensions/<category>/` sub-package
 - New shared utilities go in `src/pymolish/core/`
 - GUI panels go in `src/pymolish/gui/` (shared) or `extensions/<category>/_gui.py` (category-specific)
