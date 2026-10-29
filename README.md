@@ -2,157 +2,98 @@
 
 # PyMOLish
 
-A curated PyMOL Open Source command extension library — organized by category, with a central command registry, standardized docs, intelligent autocompletion, and optional PyQt GUI panels.
+Extra commands for [PyMOL Open Source](https://github.com/schrodinger/pymol-open-source) that take the repetitive scripting out of everyday structure work.
 
-## What is PyMOLish?
+Load a folder of docking poses into one group, align them to a reference and get the RMSDs, cluster ligands by where they sit, fetch every PDB entry for a UniProt accession, color a whole group with one palette — each of these is a single command with tab completion and built-in help.
 
-PyMOLish is an extension plugin for [PyMOL Open Source](https://github.com/schrodinger/pymol-open-source) that adds 46 commands grouped into I/O, groups, structure analysis, selection, visualization, and meta commands for discovery and help. Everything is registered through a single command registry, so discovery, help, and autocompletion work uniformly across the whole library.
+## Highlights
 
-It is meant to replace the repetitive scripting most PyMOL users end up writing by hand. With PyMOLish you can batch-load a directory of structures into a named group, run multi-alignment and report RMSDs, cluster ligands by position, fetch all PDB entries for a UniProt accession, or apply perceptual color palettes to a group — each as a single command with autocompletion and inline help.
+- **49 commands** in six categories: I/O, groups, structure analysis, selection, visualization, and discovery/help
+- **Works out of the box** — no required third-party packages. NumPy and Biopython are optional and only needed by three commands
+- **Tab completion** for group names, files, formats, and selections
+- **Built-in help** — `pymolish_list`, `pymolish_help <command>`, `pymolish_search <term>`
+- **GUI integration** — new entries in the group right-click **A**ction menu, plus keyboard shortcuts for stepping through a group (more GUI features are planned)
 
-## Features
-
-- **46 commands** across 6 categories
-- **Zero required dependencies** — heavy libraries (NumPy, Biopython, Matplotlib, PyQt5) are optional extras you install only if you need them
-- **Intelligent autocompletion** for groups, files, formats, and selections
-- **Built-in discovery** via `pymolish_list`, `pymolish_help`, `pymolish_search`
-- **Standardized Google-style docstrings** with examples, tags, and see-also links
-- **Optional PyQt5 GUI panels**
-- **Python 3.10+** (tested through 3.14)
+Most commands are run from the PyMOL command line. A few of the group commands are also reachable from the GUI; see [GUI features](docs/gui.md).
 
 ## Requirements
 
-- PyMOL Open Source
-- Python 3.10 or newer — the same interpreter PyMOL uses
-- Optional packages available through extras: `numpy`, `matplotlib`, `biopython`, `PyQt5`
+- **PyMOL Open Source 3.0 or newer**
+- **Python 3.10 or newer** — the interpreter PyMOL itself runs on
+- Optional, only for specific commands: `numpy` (ligand clustering) and `biopython` (sequence search). Everything else, including UniProt fetching and gradient colors, uses only the standard library
 
-Missing optional libraries do not prevent the plugin from loading or its other
-commands from running. Dependencies are checked when a command needs them. If one
-is missing, that command prints the dependency name and installation command,
-returns an empty result, and leaves the other commands available. For example:
-
-```text
-cluster_ligands_by_position cannot run: numpy is required but is not installed.
-Install with: pip install 'pymolish[numpy]' in PyMOL's Python environment.
-```
-
-Ligand clustering needs NumPy; sequence search needs Biopython; UniProt fetching
-and listing need Requests, with Biopython as an optional fallback. Gradient
-coloring uses Python's standard library and needs no optional packages. GUI
-dialogs require Qt support through PyMOL.
+If an optional package is missing, only the commands that need it are affected. They print what to install and leave the rest of the plugin working.
 
 ## Installation
 
-PyMOLish installs in two steps: first install the Python package into the interpreter PyMOL uses, then register it with PyMOL through the Plugin Manager.
+The quick version:
 
-### Step 1 — Install into PyMOL's Python environment
+1. Download a `pymolish_<version>.zip` from the [`plugin/`](plugin/) directory (or build your own with `python scripts/build_plugin.py`).
+2. In PyMOL open **Plugin → Plugin Manager → Install New Plugin → Choose file…** and pick the ZIP.
+3. Restart PyMOL and run `pymolish_version` in the command line.
 
-Identify the Python interpreter PyMOL is using. Inside PyMOL's command line, run:
+Step-by-step instructions with screenshots, optional dependencies, and troubleshooting are in the **[Installation guide](docs/installation.md)**.
 
-```python
-import sys; print(sys.executable)
+## Quick start
+
+Say you have a folder of docking results — or several PDB structures of the same protein — and want to look at them side by side:
+
+```pymol
+# Load every .pdb from the folder into one group
+load_files /data/docking_poses, pdb, poses
+
+# What did we get?
+group_info poses
+
+# Step through the poses one at a time (or press CTRL-N / CTRL-P)
+group_next poses
+
+# Give each pose its own color
+color_group_with_palette poses, pastels
+
+# Align all poses to a reference and print the RMSDs
+multialign poses, reference
+
+# Save everything as CIF
+export_group poses, /data/out, cif
+
+# Find more commands
+pymolish_list
+pymolish_help load_files
 ```
 
-Then install the package into that interpreter. Pick the extras you need:
+A longer walkthrough, including ligand clustering and UniProt fetching, is in the **[Quick start guide](docs/quickstart.md)**.
 
-```bash
-# Minimal — core commands only
-/path/to/pymol-python -m pip install -e .
+## Documentation
 
-# With everything (numpy, matplotlib, biopython, PyQt5)
-/path/to/pymol-python -m pip install -e ".[all]"
+| Guide | What it covers |
+|-------|----------------|
+| [Installation](docs/installation.md) | Installing the ZIP, building your own, optional dependencies, troubleshooting |
+| [Quick start](docs/quickstart.md) | A worked session from loading files to exporting results |
+| [GUI features](docs/gui.md) | Group action menu entries and keyboard shortcuts |
+| [Command reference](docs/commands/README.md) | Every command with arguments and examples, by category |
 
-# Just what you need
-/path/to/pymol-python -m pip install -e ".[numpy,biopython]"
-```
+### Command categories
 
-Available extras: `numpy`, `matplotlib`, `biopython`, `gui` (PyQt5), `dev` (pytest + ruff), `all`.
+| Category | Commands | What it does |
+|----------|---------:|--------------|
+| [I/O](docs/commands/i_o.md) | 7 | Batch-load structure files; export groups to CIF, PDB, FASTA, or CSV |
+| [Groups](docs/commands/groups.md) | 18 | Toggle, navigate, sort, copy, merge groups; extract chains |
+| [Structure](docs/commands/structure.md) | 9 | Multi-alignment, cleanup, ligand clustering, UniProt fetching |
+| [Selection](docs/commands/selection.md) | 3 | Sequence search; show/hide/select waters and ions |
+| [Visualization](docs/commands/visualization.md) | 6 | Color palettes, group coloring, secondary-structure coloring |
+| [Meta](docs/commands/meta.md) | 6 | List, search, and get help on commands; install optional dependencies |
 
-From a source clone:
+## For developers
 
 ```bash
 git clone <repo-url> pymolish
 cd pymolish
-/path/to/pymol-python -m pip install -e ".[all]"
+pip install -e ".[dev]"      # pytest + ruff
+pytest tests/
+ruff check . && ruff format .
+python scripts/build_plugin.py   # -> plugin/pymolish_<x>_<y>_<z>.zip
 ```
-
-### Step 2 — Load the plugin in PyMOL
-
-Build the plugin ZIP from a source checkout:
-
-```bash
-python scripts/build_plugin.py
-```
-
-This creates `plugin/pymolish_<x>_<y>_<z>.zip` (e.g. `plugin/pymolish_0_1_17.zip`)
-from `src/pymolish/`, excluding Python caches and bytecode. Run it again after
-source changes to replace the archive. Add `--unversioned` to write plain
-`plugin/pymolish.zip` instead. Install
-the ZIP through Plugin Manager → Install New Plugin → Choose file.
-
-**Recommended — Plugin Manager GUI:**
-
-1. Open PyMOL
-2. Go to **Plugin → Plugin Manager**
-3. Switch to the **Install New Plugin** tab
-4. Under **Install from Repository**, click **Add** and point to the `pymolish` package directory (or the `src/pymolish/` folder of your source checkout)
-5. Restart PyMOL
-
-**Alternative — manual copy:**
-
-Copy or symlink the `src/pymolish/` directory into PyMOL's plugin directory (typically `~/.pymol/startup/` on Linux/macOS; the exact path is shown in Plugin Manager → Settings). Restart PyMOL.
-
-**Verify the install:**
-
-In PyMOL's command line, run `pymolish_version`. You should see the version number and a command count.
-
-**Install optional dependencies from inside PyMOL:**
-
-```
-pymolish_install_deps              # numpy, matplotlib, biopython
-pymolish_install_deps biopython    # just one extra
-pymolish_install_deps all, dry_run=1
-```
-
-It installs into the Python that runs PyMOL (checked by importing `pymol`), using `pip` or, if pip is missing, `uv pip install --python <that python>`. `gui` (PyQt5) is only installed when named explicitly.
-
-## Quick Start
-
-A typical PyMOLish session in the PyMOL command line:
-
-```pymol
-# Load every structure from a folder into a new group
-load_files /data/pdbs, group=mystructures
-
-# Inspect what's in the group
-group_info mystructures
-
-# Cycle through the objects one at a time
-group_next mystructures   # or press CTRL-N / CTRL-P
-
-# Color the whole group with a perceptual palette
-color_group_with_palette mystructures, palette=viridis
-
-# Export every object in the group as CIF
-export_group mystructures, format=cif, outdir=/data/out
-
-# Discover more commands
-pymolish_list
-pymolish_help color_group_with_palette
-```
-## Commands
-
-[Command reference](docs/commands/README.md) — full auto-generated reference for all commands
-
-### Categories
-
-- [Groups](groups.md) — 18 command(s) - Batch-load structure files and export groups to CIF, PDB, FASTA, or CSV. 
-
-- [I/O](i_o.md) — 7 command(s) - Manipulate PyMOL object groups: toggle visibility, navigate, sort, copy, merge, extract chains.
-- [Meta](meta.md) — 6 command(s) - Discovery, help, and dependency setup, always available.
-- [Selection](selection.md) — 3 command(s) - selection helpers, show/hide/select water/ions etc.
-- [Structure](structure.md) — 8 command(s) - Multi-alignment, cleanup, ligand clustering, and UniProt fetch.
-- [Visualization](visualization.md) — 6 command(s) - Color palettes, group coloring, and secondary-structure coloring.
 
 ## License
 
