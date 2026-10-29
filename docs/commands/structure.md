@@ -1,12 +1,13 @@
 # Structure
 
-_8 command(s). Generated from the command registry — do not edit by hand._
+_9 command(s). Generated from the command registry — do not edit by hand._
 
 ## Commands in this category
 
 - [`cluster_ligands_by_position`](#cluster_ligands_by_position) — Cluster ligands by 3-D centroid into new PyMOL groups (requires numpy)
 - [`cluster_ligands_from_group`](#cluster_ligands_from_group) — Cluster ligands from a named PyMOL group (requires numpy)
 - [`fetch_by_uniprot`](#fetch_by_uniprot) — Fetch PDB structures for a UniProt accession via RCSB/UniProt APIs (biopython optional)
+- [`fetch_uniprot_ligands`](#fetch_uniprot_ligands) — Load all distinct ligands (small molecules) from a UniProt accession's PDB entries as ideal 3D models
 - [`list_objects_with_prefix`](#list_objects_with_prefix) — List PyMOL objects whose names start with a given prefix
 - [`list_uniprot_structures`](#list_uniprot_structures) — List PDB structures for a UniProt accession without loading them (biopython optional)
 - [`multialign`](#multialign) — Align multiple structures to a reference and report RMSD statistics
@@ -169,6 +170,59 @@ Since:
 
 See Also:
     list_uniprot_structures
+```
+
+</details>
+
+### `fetch_uniprot_ligands`
+
+Load all distinct ligands (small molecules) from a UniProt accession's PDB entries as ideal 3D models
+
+- **Usage:** `fetch_uniprot_ligands <uniprot_id> [min_weight=100.0] [max_ligands=0] [verbose=True]`
+- **Since:** 1.0.0
+- **Tags:** `fetch`, `uniprot`, `ligands`, `network`
+- **See also:** `fetch_by_uniprot`, `list_uniprot_structures`
+
+**Examples:**
+
+```
+fetch_uniprot_ligands P00918
+fetch_uniprot_ligands P00918, 150
+fetch_uniprot_ligands P00918, 100, 20, 0
+```
+
+<details><summary>Full docstring</summary>
+
+```
+Load every distinct ligand (small molecule) seen in a protein's PDB entries.
+
+Finds all PDB entries for the UniProt accession, collects their non-polymer
+components from RCSB, and loads each unique ligand's ideal 3D model (SDF)
+as object ``<uniprot_id>_<comp_id>``. Ions and small additives (glycerol,
+sulfate, ...) are dropped via *min_weight*. Ligands are loaded standalone,
+not in their bound pose; use :func:`fetch_by_uniprot` for that.
+
+No extra packages required.
+
+Args:
+    uniprot_id: UniProt accession ID (e.g. ``"P00918"``).
+    min_weight: Minimum molecular weight (Da) for a component to count.
+    max_ligands: Maximum number of ligands to load (0 = no limit).
+    verbose: When truthy, log per-ligand progress.
+
+Returns:
+    List of loaded ligand component IDs (e.g. ``["AZM", "BEZ"]``).
+
+Examples:
+    PyMOL> fetch_uniprot_ligands P00918
+    PyMOL> fetch_uniprot_ligands P00918, 150
+    PyMOL> fetch_uniprot_ligands P00918, 100, 20, 0
+
+Since:
+    1.0.0
+
+See Also:
+    fetch_by_uniprot, list_uniprot_structures
 ```
 
 </details>

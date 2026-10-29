@@ -18,7 +18,7 @@ Manipulate PyMOL object groups: toggle visibility, navigate, sort, copy, merge, 
 - `group_next` / `group_previous` — step through group members one at a time
 - `merge_to_group` — merge a structure into every object in a group
 
-### Structure — 8 commands · [full reference](docs/commands/structure.md)
+### Structure — 9 commands · [full reference](docs/commands/structure.md)
 Multi-alignment, cleanup, ligand clustering, and UniProt fetch.
 - `multialign` — align multiple structures and report RMSD
 - `cluster_ligands_by_position` — cluster ligands by 3D centroid (kmeans / hierarchical / distance)

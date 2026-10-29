@@ -14,6 +14,7 @@ _EXPECTED_COMMANDS = (
     "cluster_ligands_from_group",
     "fetch_by_uniprot",
     "list_uniprot_structures",
+    "fetch_uniprot_ligands",
 )
 
 

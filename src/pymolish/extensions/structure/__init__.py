@@ -13,7 +13,11 @@ def __init_plugin__(app: object | None = None) -> None:
     """Register structure-analysis commands and their autocompletions."""
     from .clean import remove_ions, remove_metals
     from .cluster_ligands import cluster_ligands_by_position, cluster_ligands_from_group
-    from .fetch_uniprot import fetch_by_uniprot, list_uniprot_structures
+    from .fetch_uniprot import (
+        fetch_by_uniprot,
+        fetch_uniprot_ligands,
+        list_uniprot_structures,
+    )
     from .multialign import list_objects_with_prefix, multialign
 
     registry = CommandRegistry.instance()
@@ -153,6 +157,23 @@ def __init_plugin__(app: object | None = None) -> None:
         ],
         tags=["list", "uniprot", "pdb", "network"],
         see_also=["fetch_by_uniprot"],
+    )
+
+    registry.register(
+        "fetch_uniprot_ligands",
+        fetch_uniprot_ligands,
+        category=CATEGORY,
+        description=(
+            "Load all distinct ligands (small molecules) from a UniProt "
+            "accession's PDB entries as ideal 3D models"
+        ),
+        examples=[
+            "fetch_uniprot_ligands P00918",
+            "fetch_uniprot_ligands P00918, 150",
+            "fetch_uniprot_ligands P00918, 100, 20, 0",
+        ],
+        tags=["fetch", "uniprot", "ligands", "network"],
+        see_also=["fetch_by_uniprot", "list_uniprot_structures"],
     )
 
     # ------------------------------------------------------------------

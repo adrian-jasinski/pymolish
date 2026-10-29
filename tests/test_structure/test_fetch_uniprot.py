@@ -152,3 +152,40 @@ def test_list_uniprot_structures_shows_details(pymol_cmd, monkeypatch, capsys):
     _mock_http(monkeypatch, ["1TUP"])
     list_uniprot_structures("P04637", show_details=True)
     assert "Test protein [X-RAY, 2.1" in capsys.readouterr().out
+
+
+# ---------------------------------------------------------------------------
+# fetch_uniprot_ligands
+# ---------------------------------------------------------------------------
+
+
+def test_fetch_uniprot_ligands_filters_by_weight(pymol_cmd, monkeypatch):
+    comps = [("ZN", "ZINC ION", 65.4), ("AZM", "ACETAZOLAMIDE", 222.2)]
+
+    def fake(url, payload=None, timeout=30):
+        if "entries(" not in payload["query"]:
+            return {"data": {"polymer_entities": [{"entry": {"id": "1CA2"}}]}}
+        ents = [
+            {
+                "nonpolymer_comp": {
+                    "chem_comp": {"id": i, "name": n, "formula_weight": w}
+                }
+            }
+            for i, n, w in comps
+        ]
+        return {"data": {"entries": [{"nonpolymer_entities": ents}]}}
+
+    class Resp:
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *a):
+            return False
+
+        def read(self):
+            return b"sdf"
+
+    monkeypatch.setattr(fetch_uniprot, "_http_json", fake)
+    monkeypatch.setattr(fetch_uniprot.urllib.request, "urlopen", lambda *a, **k: Resp())
+    monkeypatch.setattr(fetch_uniprot.cmd, "read_molstr", lambda *a, **k: None, False)
+    assert fetch_uniprot.fetch_uniprot_ligands("p00918", verbose=False) == ["AZM"]

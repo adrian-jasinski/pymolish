@@ -331,3 +331,132 @@ def list_uniprot_structures(
         plog(_TAG, f"  {', '.join(pdb_ids)}")
 
     return pdb_ids
+
+
+def _find_ligands(pdb_ids: list[str], min_weight: float) -> dict[str, str]:
+    """Map ligand chemical-component IDs to names for the given PDB entries.
+
+    Args:
+        pdb_ids: PDB entry IDs to inspect.
+        min_weight: Skip components lighter than this (ions, water-like additives).
+
+    Returns:
+        Dict ``{comp_id: name}`` of unique small molecules.
+
+    Raises:
+        urllib.error.URLError: When the HTTP request fails.
+        RuntimeError: When the GraphQL response reports errors.
+    """
+    query = """
+    query ($ids: [String!]!) {
+        entries(entry_ids: $ids) {
+            nonpolymer_entities {
+                nonpolymer_comp { chem_comp { id name formula_weight } }
+            }
+        }
+    }
+    """
+    ligands: dict[str, str] = {}
+    for i in range(0, len(pdb_ids), 200):  # ponytail: fixed batch size
+        data = _http_json(
+            "https://data.rcsb.org/graphql",
+            {"query": query, "variables": {"ids": pdb_ids[i : i + 200]}},
+        )
+        if "errors" in data:
+            raise RuntimeError(f"GraphQL errors: {data['errors']}")
+        for entry in (data.get("data") or {}).get("entries") or []:
+            for ent in (entry or {}).get("nonpolymer_entities") or []:
+                comp = ent["nonpolymer_comp"]["chem_comp"]
+                if (comp.get("formula_weight") or 0) >= min_weight:
+                    ligands[comp["id"]] = comp.get("name") or ""
+    return ligands
+
+
+def fetch_uniprot_ligands(
+    uniprot_id: str,
+    min_weight: float | str = 100.0,
+    max_ligands: int | str = 0,
+    verbose: bool | str | int = True,
+) -> list[str]:
+    """Load every distinct ligand (small molecule) seen in a protein's PDB entries.
+
+    Finds all PDB entries for the UniProt accession, collects their non-polymer
+    components from RCSB, and loads each unique ligand's ideal 3D model (SDF)
+    as object ``<uniprot_id>_<comp_id>``. Ions and small additives (glycerol,
+    sulfate, ...) are dropped via *min_weight*. Ligands are loaded standalone,
+    not in their bound pose; use :func:`fetch_by_uniprot` for that.
+
+    No extra packages required.
+
+    Args:
+        uniprot_id: UniProt accession ID (e.g. ``"P00918"``).
+        min_weight: Minimum molecular weight (Da) for a component to count.
+        max_ligands: Maximum number of ligands to load (0 = no limit).
+        verbose: When truthy, log per-ligand progress.
+
+    Returns:
+        List of loaded ligand component IDs (e.g. ``["AZM", "BEZ"]``).
+
+    Examples:
+        PyMOL> fetch_uniprot_ligands P00918
+        PyMOL> fetch_uniprot_ligands P00918, 150
+        PyMOL> fetch_uniprot_ligands P00918, 100, 20, 0
+
+    Since:
+        1.0.0
+
+    See Also:
+        fetch_by_uniprot, list_uniprot_structures
+    """
+    verbose = coerce_bool(verbose)
+    uniprot_id = _clean(uniprot_id).upper()
+    min_weight = float(min_weight)
+    max_ligands = int(max_ligands)
+
+    if not uniprot_id:
+        plog(_TAG, "uniprot_id must be non-empty", "error")
+        return []
+
+    pdb_ids = _find_pdb_ids(uniprot_id, verbose)
+    if not pdb_ids:
+        plog(_TAG, f"no PDB structures found for {uniprot_id!r}", "error")
+        return []
+
+    try:
+        ligands = _find_ligands(pdb_ids, min_weight)
+    except Exception as exc:  # noqa: BLE001
+        plog(_TAG, f"ligand lookup failed: {exc}", "error")
+        return []
+    if not ligands:
+        plog(_TAG, f"no ligands found in {len(pdb_ids)} entries of {uniprot_id}")
+        return []
+
+    comp_ids = sorted(ligands)
+    if max_ligands > 0:
+        comp_ids = comp_ids[:max_ligands]
+    if verbose:
+        plog(
+            _TAG,
+            f"{len(ligands)} ligand(s) in {len(pdb_ids)} entries; "
+            f"loading {len(comp_ids)}",
+        )
+
+    loaded: list[str] = []
+    for idx, comp_id in enumerate(comp_ids, start=1):
+        obj_name = f"{uniprot_id}_{comp_id}"
+        try:
+            url = f"https://files.rcsb.org/ligands/download/{comp_id}_ideal.sdf"
+            with urllib.request.urlopen(url, timeout=30) as resp:
+                cmd.read_molstr(resp.read().decode(), obj_name)
+            loaded.append(comp_id)
+            if verbose:
+                plog(
+                    _TAG,
+                    f"({idx}/{len(comp_ids)}) {comp_id} "
+                    f"({ligands[comp_id]}) → {obj_name}",
+                )
+        except Exception as exc:  # noqa: BLE001
+            plog(_TAG, f"failed to fetch ligand {comp_id}: {exc}", "warn")
+
+    plog(_TAG, f"loaded {len(loaded)} ligand(s) for {uniprot_id}")
+    return loaded
