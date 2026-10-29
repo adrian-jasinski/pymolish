@@ -2,6 +2,8 @@
 
 PyMOLish is installed like any other PyMOL plugin: through the Plugin Manager, from a ZIP file. No `pip` step is needed for the core commands.
 
+Prefer to watch? The first 15 seconds of the [video tour](https://www.youtube.com/watch?v=q6c24OJZzd4&t=0s) show exactly these steps.
+
 ## Requirements
 
 - PyMOL Open Source **3.0 or newer**

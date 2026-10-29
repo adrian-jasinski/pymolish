@@ -4,6 +4,8 @@ This walkthrough takes a folder of structures through loading, inspecting, align
 
 If you have not installed PyMOLish yet, start with the [Installation guide](installation.md).
 
+The [video tour](https://www.youtube.com/watch?v=q6c24OJZzd4&t=25s) shows the first part of this session live: fetching a structure, loading a set of ligands into a group with `load_files`, and stepping through them.
+
 ## Load a folder of structures into a group
 
 PyMOL groups are the backbone of PyMOLish. Most commands work on a group, so the first step is to put related structures into one.

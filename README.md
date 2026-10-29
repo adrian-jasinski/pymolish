@@ -6,6 +6,19 @@ Extra commands for [PyMOL Open Source](https://github.com/schrodinger/pymol-open
 
 Load a folder of docking poses into one group, align them to a reference and get the RMSDs, cluster ligands by where they sit, fetch every PDB entry for a UniProt accession, color a whole group with one palette — each of these is a single command with tab completion and built-in help.
 
+## Two-minute video tour
+
+Installation through the Plugin Manager, loading a set of ligands into a group, and flipping through them with the new menu entries and keyboard shortcuts:
+
+<p align="center">
+  <a href="https://www.youtube.com/watch?v=q6c24OJZzd4">
+    <img src="img/video_thumbnail.png" alt="Watch the PyMOLish video tour on YouTube" width="640">
+  </a>
+  <br><sub>▶ Click to watch on YouTube</sub>
+</p>
+
+Jump to a part: [install](https://www.youtube.com/watch?v=q6c24OJZzd4&t=0s) · [load files into a group](https://www.youtube.com/watch?v=q6c24OJZzd4&t=25s) · [disable / pick one ligand from the GUI](https://www.youtube.com/watch?v=q6c24OJZzd4&t=50s) · [CTRL-N / CTRL-P](https://www.youtube.com/watch?v=q6c24OJZzd4&t=70s) · [enable, disable, sort, duplicate group](https://www.youtube.com/watch?v=q6c24OJZzd4&t=88s)
+
 ## Highlights
 
 - **49 commands** in six categories: I/O, groups, structure analysis, selection, visualization, and discovery/help
@@ -61,6 +74,10 @@ export_group poses, /data/out, cif
 pymolish_list
 pymolish_help load_files
 ```
+
+This is what stepping through a group of 111 ligands with **CTRL-N** / **CTRL-P** looks like, followed by "enable group" from the menu:
+
+<p align="center"><img src="img/group_next_demo.gif" alt="Stepping through ligands in a group with CTRL-N and CTRL-P" width="720"></p>
 
 A longer walkthrough, including ligand clustering and UniProt fetching, is in the **[Quick start guide](docs/quickstart.md)**.
 
