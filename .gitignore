@@ -43,9 +43,9 @@ htmlcov/
 .env
 .env.local 
 
-# Generated plugin archive
-plugin/*.zip
-
 
 # data
 data/
+
+# Stamped into the plugin ZIP by scripts/build_plugin.py
+src/pymolish/_version.py

@@ -15,7 +15,28 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from .core.registry import CommandInfo
 
-__version__ = "0.1.14"
+
+def _read_version() -> str:
+    """Single source of truth is pyproject.toml.
+
+    Installed via pip/uv -> package metadata.  Installed from the plugin ZIP
+    -> ``_version.py`` stamped by ``scripts/build_plugin.py``.
+    """
+    try:
+        from importlib.metadata import version
+
+        return version("pymolish")
+    except Exception:  # noqa: BLE001 - PackageNotFoundError or odd envs
+        pass
+    try:
+        from ._version import __version__ as stamped
+
+        return stamped
+    except ImportError:
+        return "0+unknown"
+
+
+__version__ = _read_version()
 
 _EXTENSION_SUBPACKAGE = ".extensions"
 _EXTENSION_ABSOLUTE = "pymolish.extensions"

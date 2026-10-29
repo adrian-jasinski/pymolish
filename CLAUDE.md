@@ -84,7 +84,7 @@ Rules:
 - Use existing utilities from `core/group_utils.py`, `core/validators.py` before writing new ones
 - Every registered command must include: category, description, examples, tags, see_also
 - Docstrings must follow the standardized template (see ARCHITECTURE_PLAN.md Section 6)
-- After each task that changes code, bump the patch version in both `pyproject.toml` and `src/pymolish/__init__.py` (keep them in sync)
+- After each task that changes code, bump the patch version in `pyproject.toml` (the only place; `__version__` is derived from it)
 
 ## Restrictions
 
