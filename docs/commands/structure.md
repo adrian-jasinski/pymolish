@@ -127,7 +127,7 @@ See Also:
 
 Fetch PDB structures for a UniProt accession via RCSB/UniProt APIs (biopython optional)
 
-- **Usage:** `fetch_by_uniprot <uniprot_id> [max_structures=10] [verbose=True]`
+- **Usage:** `fetch_by_uniprot <uniprot_id> [max_structures=0] [verbose=True] [group_name=''] [group=True]`
 - **Since:** 1.0.0
 - **Tags:** `fetch`, `uniprot`, `pdb`, `network`
 - **See also:** `list_uniprot_structures`
@@ -138,6 +138,8 @@ Fetch PDB structures for a UniProt accession via RCSB/UniProt APIs (biopython op
 fetch_by_uniprot P04637
 fetch_by_uniprot P38398, 5
 fetch_by_uniprot Q9Y6R4, 3, 0
+fetch_by_uniprot P04637, 0, 1, p53
+fetch_by_uniprot P04637, group=0
 ```
 
 <details><summary>Full docstring</summary>
@@ -146,7 +148,7 @@ fetch_by_uniprot Q9Y6R4, 3, 0
 Fetch PDB structures for a UniProt accession into PyMOL.
 
 Tries three search strategies in order (RCSB GraphQL → UniProt REST →
-Biopython) and loads up to *max_structures* PDB entries via
+Biopython) and loads all matching PDB entries (or up to *max_structures*) via
 :pymol:`fetch`.
 
 No extra packages required; **biopython** (``pymolish[biopython]``) adds
@@ -154,8 +156,12 @@ an optional ExPASy fallback that is skipped when absent.
 
 Args:
     uniprot_id: UniProt accession ID (e.g. ``"P04637"``).
-    max_structures: Maximum number of PDB entries to load.
+    max_structures: Maximum number of PDB entries to load (0 = no limit).
     verbose: When truthy, log per-structure progress.
+    group_name: Group to collect the loaded objects in. Defaults to
+        *uniprot_id*.
+    group: When falsy, load objects ungrouped. Combining ``group=0`` with
+        an explicit *group_name* is an error and nothing is loaded.
 
 Returns:
     List of successfully loaded PDB IDs (uppercase, e.g. ``["1TUP"]``).
@@ -164,6 +170,8 @@ Examples:
     PyMOL> fetch_by_uniprot P04637
     PyMOL> fetch_by_uniprot P38398, 5
     PyMOL> fetch_by_uniprot Q9Y6R4, 3, 0
+    PyMOL> fetch_by_uniprot P04637, 0, 1, p53
+    PyMOL> fetch_by_uniprot P04637, group=0
 
 Since:
     1.0.0
@@ -178,7 +186,7 @@ See Also:
 
 Load all distinct ligands (small molecules) from a UniProt accession's PDB entries as ideal 3D models
 
-- **Usage:** `fetch_uniprot_ligands <uniprot_id> [min_weight=100.0] [max_ligands=0] [verbose=True]`
+- **Usage:** `fetch_uniprot_ligands <uniprot_id> [min_weight=100.0] [max_ligands=0] [verbose=True] [group_name=''] [group=True]`
 - **Since:** 1.0.0
 - **Tags:** `fetch`, `uniprot`, `ligands`, `network`
 - **See also:** `fetch_by_uniprot`, `list_uniprot_structures`
@@ -189,6 +197,8 @@ Load all distinct ligands (small molecules) from a UniProt accession's PDB entri
 fetch_uniprot_ligands P00918
 fetch_uniprot_ligands P00918, 150
 fetch_uniprot_ligands P00918, 100, 20, 0
+fetch_uniprot_ligands P00918, 100, 0, 1, CA2_ligs
+fetch_uniprot_ligands P00918, group=0
 ```
 
 <details><summary>Full docstring</summary>
@@ -209,6 +219,10 @@ Args:
     min_weight: Minimum molecular weight (Da) for a component to count.
     max_ligands: Maximum number of ligands to load (0 = no limit).
     verbose: When truthy, log per-ligand progress.
+    group_name: Group to collect the loaded ligands in. Defaults to
+        ``<uniprot_id>_ligands``.
+    group: When falsy, load ligands ungrouped. Combining ``group=0`` with
+        an explicit *group_name* is an error and nothing is loaded.
 
 Returns:
     List of loaded ligand component IDs (e.g. ``["AZM", "BEZ"]``).
@@ -217,6 +231,8 @@ Examples:
     PyMOL> fetch_uniprot_ligands P00918
     PyMOL> fetch_uniprot_ligands P00918, 150
     PyMOL> fetch_uniprot_ligands P00918, 100, 20, 0
+    PyMOL> fetch_uniprot_ligands P00918, 100, 0, 1, CA2_ligs
+    PyMOL> fetch_uniprot_ligands P00918, group=0
 
 Since:
     1.0.0

@@ -12,6 +12,7 @@ import urllib.request
 from pymol import cmd
 
 from ...core.cli import clean as _clean
+from ...core.group_utils import GroupUtils
 from ...core.logging import plog
 from ...core.validators import coerce_bool
 
@@ -177,18 +178,48 @@ def _find_pdb_ids(uniprot_id: str, verbose: bool) -> list[str]:
 
 # ---------------------------------------------------------------------------
 # Public commands
+def _resolve_group(
+    group_name: str, group: bool | str | int, default: str
+) -> str | None:
+    """Decide which group loaded objects go into.
+
+    Args:
+        group_name: User-supplied group name (``""`` = use *default*).
+        group: Whether grouping is enabled at all.
+        default: Group name used when *group_name* is empty.
+
+    Returns:
+        The group name, ``""`` when grouping is disabled, or ``None`` when the
+        caller passed a *group_name* together with ``group=False`` (conflict;
+        an error has been logged and nothing should be loaded).
+    """
+    group = coerce_bool(group)
+    group_name = _clean(group_name)
+    if group_name and not group:
+        plog(
+            _TAG,
+            f"conflicting options: group_name={group_name!r} but group=0; "
+            "pass group=1 or drop group_name — nothing loaded",
+            "error",
+        )
+        return None
+    return (group_name or default) if group else ""
+
+
 # ---------------------------------------------------------------------------
 
 
 def fetch_by_uniprot(
     uniprot_id: str,
-    max_structures: int | str = 10,
+    max_structures: int | str = 0,
     verbose: bool | str | int = True,
+    group_name: str = "",
+    group: bool | str | int = True,
 ) -> list[str]:
     """Fetch PDB structures for a UniProt accession into PyMOL.
 
     Tries three search strategies in order (RCSB GraphQL → UniProt REST →
-    Biopython) and loads up to *max_structures* PDB entries via
+    Biopython) and loads all matching PDB entries (or up to *max_structures*) via
     :pymol:`fetch`.
 
     No extra packages required; **biopython** (``pymolish[biopython]``) adds
@@ -196,8 +227,12 @@ def fetch_by_uniprot(
 
     Args:
         uniprot_id: UniProt accession ID (e.g. ``"P04637"``).
-        max_structures: Maximum number of PDB entries to load.
+        max_structures: Maximum number of PDB entries to load (0 = no limit).
         verbose: When truthy, log per-structure progress.
+        group_name: Group to collect the loaded objects in. Defaults to
+            *uniprot_id*.
+        group: When falsy, load objects ungrouped. Combining ``group=0`` with
+            an explicit *group_name* is an error and nothing is loaded.
 
     Returns:
         List of successfully loaded PDB IDs (uppercase, e.g. ``["1TUP"]``).
@@ -206,6 +241,8 @@ def fetch_by_uniprot(
         PyMOL> fetch_by_uniprot P04637
         PyMOL> fetch_by_uniprot P38398, 5
         PyMOL> fetch_by_uniprot Q9Y6R4, 3, 0
+        PyMOL> fetch_by_uniprot P04637, 0, 1, p53
+        PyMOL> fetch_by_uniprot P04637, group=0
 
     Since:
         1.0.0
@@ -220,6 +257,9 @@ def fetch_by_uniprot(
     if not uniprot_id:
         plog(_TAG, "uniprot_id must be non-empty", "error")
         return []
+    group_name = _resolve_group(group_name, group, uniprot_id)
+    if group_name is None:
+        return []
 
     if verbose:
         plog(_TAG, f"searching PDB structures for UniProt ID {uniprot_id!r}")
@@ -229,7 +269,7 @@ def fetch_by_uniprot(
         plog(_TAG, f"no PDB structures found for {uniprot_id!r}", "error")
         return []
 
-    if len(pdb_ids) > max_structures:
+    if max_structures > 0 and len(pdb_ids) > max_structures:
         if verbose:
             plog(
                 _TAG,
@@ -241,23 +281,28 @@ def fetch_by_uniprot(
         plog(_TAG, f"fetching {len(pdb_ids)} PDB structure(s)…")
 
     fetched: list[str] = []
+    obj_names: list[str] = []
     n = len(pdb_ids)
     for idx, pdb_id in enumerate(pdb_ids, start=1):
         obj_name = f"{uniprot_id}_{pdb_id}"
         try:
             cmd.fetch(pdb_id, obj_name)
             fetched.append(pdb_id)
+            obj_names.append(obj_name)
             if verbose:
                 plog(_TAG, f"({idx}/{n}) {pdb_id} → {obj_name}")
         except Exception as exc:  # noqa: BLE001
             plog(_TAG, f"failed to fetch {pdb_id}: {exc}", "warn")
 
     if fetched:
+        if group_name:
+            GroupUtils.ensure_group(group_name, obj_names)
         if verbose:
             plog(
                 _TAG,
                 f"fetched {len(fetched)} structure(s) for {uniprot_id}: "
-                f"{', '.join(fetched)}",
+                f"{', '.join(fetched)}"
+                + (f" → group {group_name!r}" if group_name else ""),
             )
     else:
         plog(_TAG, f"failed to fetch any structure for {uniprot_id}", "error")
@@ -377,6 +422,8 @@ def fetch_uniprot_ligands(
     min_weight: float | str = 100.0,
     max_ligands: int | str = 0,
     verbose: bool | str | int = True,
+    group_name: str = "",
+    group: bool | str | int = True,
 ) -> list[str]:
     """Load every distinct ligand (small molecule) seen in a protein's PDB entries.
 
@@ -393,6 +440,10 @@ def fetch_uniprot_ligands(
         min_weight: Minimum molecular weight (Da) for a component to count.
         max_ligands: Maximum number of ligands to load (0 = no limit).
         verbose: When truthy, log per-ligand progress.
+        group_name: Group to collect the loaded ligands in. Defaults to
+            ``<uniprot_id>_ligands``.
+        group: When falsy, load ligands ungrouped. Combining ``group=0`` with
+            an explicit *group_name* is an error and nothing is loaded.
 
     Returns:
         List of loaded ligand component IDs (e.g. ``["AZM", "BEZ"]``).
@@ -401,6 +452,8 @@ def fetch_uniprot_ligands(
         PyMOL> fetch_uniprot_ligands P00918
         PyMOL> fetch_uniprot_ligands P00918, 150
         PyMOL> fetch_uniprot_ligands P00918, 100, 20, 0
+        PyMOL> fetch_uniprot_ligands P00918, 100, 0, 1, CA2_ligs
+        PyMOL> fetch_uniprot_ligands P00918, group=0
 
     Since:
         1.0.0
@@ -415,6 +468,9 @@ def fetch_uniprot_ligands(
 
     if not uniprot_id:
         plog(_TAG, "uniprot_id must be non-empty", "error")
+        return []
+    group_name = _resolve_group(group_name, group, f"{uniprot_id}_ligands")
+    if group_name is None:
         return []
 
     pdb_ids = _find_pdb_ids(uniprot_id, verbose)
@@ -442,6 +498,7 @@ def fetch_uniprot_ligands(
         )
 
     loaded: list[str] = []
+    obj_names: list[str] = []
     for idx, comp_id in enumerate(comp_ids, start=1):
         obj_name = f"{uniprot_id}_{comp_id}"
         try:
@@ -449,6 +506,7 @@ def fetch_uniprot_ligands(
             with urllib.request.urlopen(url, timeout=30) as resp:
                 cmd.read_molstr(resp.read().decode(), obj_name)
             loaded.append(comp_id)
+            obj_names.append(obj_name)
             if verbose:
                 plog(
                     _TAG,
@@ -458,5 +516,11 @@ def fetch_uniprot_ligands(
         except Exception as exc:  # noqa: BLE001
             plog(_TAG, f"failed to fetch ligand {comp_id}: {exc}", "warn")
 
-    plog(_TAG, f"loaded {len(loaded)} ligand(s) for {uniprot_id}")
+    if loaded and group_name:
+        GroupUtils.ensure_group(group_name, obj_names)
+    plog(
+        _TAG,
+        f"loaded {len(loaded)} ligand(s) for {uniprot_id}"
+        + (f" → group {group_name!r}" if loaded and group_name else ""),
+    )
     return loaded

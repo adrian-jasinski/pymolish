@@ -112,6 +112,33 @@ def test_fetch_by_uniprot_handles_fetch_error(pymol_cmd, monkeypatch, capsys):
     assert "failed" in capsys.readouterr().out.lower()
 
 
+def test_fetch_by_uniprot_groups_under_uniprot_id_by_default(pymol_cmd, monkeypatch):
+    _mock_http(monkeypatch, ["1TUP"])
+    assert fetch_by_uniprot("P04637", verbose=False) == ["1TUP"]
+    pymol_cmd.group.assert_called_once_with("P04637", "P04637_1TUP", action="add")
+
+
+def test_fetch_by_uniprot_custom_group_name(pymol_cmd, monkeypatch):
+    _mock_http(monkeypatch, ["1TUP"])
+    fetch_by_uniprot("P04637", verbose=False, group_name="p53")
+    pymol_cmd.group.assert_called_once_with("p53", "P04637_1TUP", action="add")
+
+
+def test_fetch_by_uniprot_group_false_skips_grouping(pymol_cmd, monkeypatch):
+    _mock_http(monkeypatch, ["1TUP"])
+    assert fetch_by_uniprot("P04637", verbose=False, group=0) == ["1TUP"]
+    pymol_cmd.group.assert_not_called()
+
+
+def test_fetch_by_uniprot_group_name_with_group_false_is_error(
+    pymol_cmd, monkeypatch, capsys
+):
+    _mock_http(monkeypatch, ["1TUP"])
+    assert fetch_by_uniprot("P04637", verbose=False, group_name="x", group=0) == []
+    pymol_cmd.fetch.assert_not_called()
+    assert "conflicting" in capsys.readouterr().out.lower()
+
+
 def test_fetch_by_uniprot_upcases_id(pymol_cmd, monkeypatch):
     _mock_http(monkeypatch, ["1TUP"])
     result = fetch_by_uniprot("p04637", max_structures=10, verbose=False)
@@ -189,3 +216,21 @@ def test_fetch_uniprot_ligands_filters_by_weight(pymol_cmd, monkeypatch):
     monkeypatch.setattr(fetch_uniprot.urllib.request, "urlopen", lambda *a, **k: Resp())
     monkeypatch.setattr(fetch_uniprot.cmd, "read_molstr", lambda *a, **k: None, False)
     assert fetch_uniprot.fetch_uniprot_ligands("p00918", verbose=False) == ["AZM"]
+    pymol_cmd.group.assert_called_once_with(
+        "P00918_ligands", "P00918_AZM", action="add"
+    )
+
+    pymol_cmd.group.reset_mock()
+    fetch_uniprot.fetch_uniprot_ligands("p00918", verbose=False, group_name="ligs")
+    pymol_cmd.group.assert_called_once_with("ligs", "P00918_AZM", action="add")
+
+    pymol_cmd.group.reset_mock()
+    fetch_uniprot.fetch_uniprot_ligands("p00918", verbose=False, group=0)
+    pymol_cmd.group.assert_not_called()
+
+    assert (
+        fetch_uniprot.fetch_uniprot_ligands(
+            "p00918", verbose=False, group_name="ligs", group=0
+        )
+        == []
+    )

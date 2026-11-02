@@ -137,6 +137,8 @@ def __init_plugin__(app: object | None = None) -> None:
             "fetch_by_uniprot P04637",
             "fetch_by_uniprot P38398, 5",
             "fetch_by_uniprot Q9Y6R4, 3, 0",
+            "fetch_by_uniprot P04637, 0, 1, p53",
+            "fetch_by_uniprot P04637, group=0",
         ],
         tags=["fetch", "uniprot", "pdb", "network"],
         see_also=["list_uniprot_structures"],
@@ -171,6 +173,8 @@ def __init_plugin__(app: object | None = None) -> None:
             "fetch_uniprot_ligands P00918",
             "fetch_uniprot_ligands P00918, 150",
             "fetch_uniprot_ligands P00918, 100, 20, 0",
+            "fetch_uniprot_ligands P00918, 100, 0, 1, CA2_ligs",
+            "fetch_uniprot_ligands P00918, group=0",
         ],
         tags=["fetch", "uniprot", "ligands", "network"],
         see_also=["fetch_by_uniprot", "list_uniprot_structures"],
@@ -194,4 +198,9 @@ def __init_plugin__(app: object | None = None) -> None:
     )
     autocomplete.register(
         "cluster_ligands_from_group", 0, completers.group_name, "group"
+    )
+
+    autocomplete.register("fetch_by_uniprot", 3, completers.group_name, "group_name")
+    autocomplete.register(
+        "fetch_uniprot_ligands", 4, completers.group_name, "group_name"
     )

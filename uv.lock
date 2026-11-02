@@ -890,7 +890,7 @@ wheels = [
 
 [[package]]
 name = "pymolish"
-version = "0.1.19"
+version = "0.1.21"
 source = { editable = "." }
 
 [package.optional-dependencies]
