@@ -1,6 +1,6 @@
 # Visualization
 
-_6 command(s). Generated from the command registry — do not edit by hand._
+_8 command(s). Generated from the command registry — do not edit by hand._
 
 ## Commands in this category
 
@@ -10,6 +10,8 @@ _6 command(s). Generated from the command registry — do not edit by hand._
 - [`list_available_palettes`](#list_available_palettes) — List all available color palettes with descriptions
 - [`list_cartoon_palettes`](#list_cartoon_palettes) — List all available secondary-structure color palettes
 - [`register_extended_colors`](#register_extended_colors) — Register extended color palettes with PyMOL's color system
+- [`ui_scale`](#ui_scale) — Enlarge PyMOL's Qt interface fonts and object panel for recording or presenting
+- [`ui_scale_reset`](#ui_scale_reset) — Restore the interface sizes from before the first ui_scale call
 
 ---
 
@@ -282,6 +284,95 @@ Since:
 
 See Also:
     list_available_palettes, color_group_with_palette
+```
+
+</details>
+
+### `ui_scale`
+
+Enlarge PyMOL's Qt interface fonts and object panel for recording or presenting
+
+- **Usage:** `ui_scale [font_size=14] [scale_factor=''] [control_size=''] [panel_width='']`
+- **Since:** 1.0.0
+- **Tags:** `gui`, `font`, `scale`, `video`, `accessibility`
+- **See also:** `ui_scale_reset`
+
+**Examples:**
+
+```
+ui_scale
+ui_scale 16
+ui_scale 14, 2, 22, 250
+```
+
+<details><summary>Full docstring</summary>
+
+```
+Enlarge PyMOL's Qt interface (menus, command line, output, buttons, panel).
+
+One knob (``font_size``) drives everything; the right-hand object panel
+values are derived from it unless given explicitly. Call
+:func:`ui_scale_reset` to restore the original look.
+
+Args:
+    font_size: Point size for all Qt widgets. Default: ``14``.
+    scale_factor: ``display_scale_factor`` for the internal (OpenGL) GUI.
+        Default: ``2`` when ``font_size`` > 12, else ``1``.
+    control_size: ``internal_gui_control_size`` (object panel button
+        height). Default: ``font_size * 1.5``.
+    panel_width: ``internal_gui_width`` in pixels. Default: ``font_size * 18``.
+
+Returns:
+    Dict of the values applied: ``font_size``, ``display_scale_factor``,
+    ``internal_gui_control_size``, ``internal_gui_width``, and ``qt`` (bool,
+    whether a Qt application was found and styled).
+
+Examples:
+    PyMOL> ui_scale
+    PyMOL> ui_scale 16
+    PyMOL> ui_scale 14, 2, 22, 250
+
+Since:
+    0.1.19
+
+See Also:
+    ui_scale_reset
+```
+
+</details>
+
+### `ui_scale_reset`
+
+Restore the interface sizes from before the first ui_scale call
+
+- **Usage:** `ui_scale_reset`
+- **Since:** 1.0.0
+- **Tags:** `gui`, `font`, `scale`, `reset`
+- **See also:** `ui_scale`
+
+**Examples:**
+
+```
+ui_scale_reset
+```
+
+<details><summary>Full docstring</summary>
+
+```
+Restore the interface sizes captured before the first :func:`ui_scale`.
+
+Returns:
+    ``True`` when a previous :func:`ui_scale` state was restored, ``False``
+    when there was nothing to reset.
+
+Examples:
+    PyMOL> ui_scale_reset
+
+Since:
+    0.1.19
+
+See Also:
+    ui_scale
 ```
 
 </details>

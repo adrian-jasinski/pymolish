@@ -1,4 +1,4 @@
-"""Color and visualization extensions: palettes, color_group, color_ss."""
+"""Color and visualization extensions: palettes, color_group, color_ss, ui_scale."""
 
 from __future__ import annotations
 
@@ -22,6 +22,7 @@ def __init_plugin__(app: object | None = None) -> None:
         list_available_palettes,
         register_extended_colors,
     )
+    from .ui_scale import ui_scale, ui_scale_reset
 
     registry = CommandRegistry.instance()
     autocomplete = AutocompletionRegistry.instance()
@@ -138,6 +139,33 @@ def __init_plugin__(app: object | None = None) -> None:
         ],
         tags=["color", "secondary structure", "cartoon", "list"],
         see_also=["color_secondary_structure"],
+    )
+
+    # ------------------------------------------------------------------
+    # ui_scale.py commands
+    # ------------------------------------------------------------------
+
+    registry.register(
+        "ui_scale",
+        ui_scale,
+        category=CATEGORY,
+        description=(
+            "Enlarge PyMOL's Qt interface fonts and object panel for recording "
+            "or presenting"
+        ),
+        examples=["ui_scale", "ui_scale 16", "ui_scale 14, 2, 22, 250"],
+        tags=["gui", "font", "scale", "video", "accessibility"],
+        see_also=["ui_scale_reset"],
+    )
+
+    registry.register(
+        "ui_scale_reset",
+        ui_scale_reset,
+        category=CATEGORY,
+        description="Restore the interface sizes from before the first ui_scale call",
+        examples=["ui_scale_reset"],
+        tags=["gui", "font", "scale", "reset"],
+        see_also=["ui_scale"],
     )
 
     # ------------------------------------------------------------------
