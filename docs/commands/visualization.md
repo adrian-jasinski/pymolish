@@ -126,7 +126,7 @@ See Also:
 
 Color a predicted model by pLDDT confidence (B-factor) and draw a legend
 
-- **Usage:** `color_plddt [selection='all'] [legend=True] [palette='gradient'] [verbose=True]`
+- **Usage:** `color_plddt [selection='all'] [legend=True] [palette='af'] [verbose=True]`
 - **Since:** 1.0.0
 - **Tags:** `color`, `plddt`, `alphafold`, `esmfold`, `confidence`
 - **See also:** `fetch_fold`, `color_secondary_structure`
@@ -135,7 +135,7 @@ Color a predicted model by pLDDT confidence (B-factor) and draw a legend
 
 ```
 color_plddt
-color_plddt AF_P04637, palette=af
+color_plddt AF_P04637, palette=gradient
 color_plddt my_model, 0
 ```
 
@@ -146,14 +146,15 @@ Color atoms by pLDDT confidence (B-factor column) and draw a legend.
 
 AlphaFold DB and ESMFold models store the per-residue pLDDT score
 (0-100) in the B-factor field, so no parsing is required.  The legend is
-a PyMOL ramp object named ``plddt_legend``; enabled ramps draw a labelled
+a PyMOL ramp object named ``AF_pLDDT_legend``; enabled ramps draw a labelled
 color bar in the viewport.
 
 Args:
     selection: PyMOL selection to color. Default: ``"all"``.
-    legend: Create/refresh the ``plddt_legend`` ramp. Default: ``True``.
-    palette: ``"gradient"`` (red -> yellow -> blue, continuous) or
-        ``"af"`` (the four AlphaFold DB confidence bins).
+    legend: Create/refresh the ``AF_pLDDT_legend`` ramp. Default: ``True``.
+    palette: ``"af"`` (default; the four AlphaFold DB confidence bins:
+        orange <50, yellow <70, light blue <90, dark blue >=90) or
+        ``"gradient"`` (continuous red -> yellow -> blue over 0-100).
     verbose: When truthy, log a summary. Default: ``True``.
 
 Returns:
@@ -162,7 +163,7 @@ Returns:
 
 Examples:
     PyMOL> color_plddt
-    PyMOL> color_plddt AF_P04637, palette=af
+    PyMOL> color_plddt AF_P04637, palette=gradient
     PyMOL> color_plddt my_model, 0
 
 Since:

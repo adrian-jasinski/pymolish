@@ -34,6 +34,9 @@ def _not_found():
 
 
 def test_detection():
+    assert mod._parse_af_model_id("AF-P04637-F1") == ("P04637", 1)
+    assert mod._parse_af_model_id("af-q8wz42-f12-model_v4") == ("Q8WZ42", 12)
+    assert mod._parse_af_model_id("P04637") is None
     assert mod._is_accession("P04637")
     assert mod._is_accession("A0A024R161")
     assert not mod._is_accession(_SEQ)
@@ -56,9 +59,22 @@ def test_accession_loads_from_alphafold(pymol_cmd, monkeypatch):
 
     assert fetch_fold("P04637") == "AF_P04637"
     pymol_cmd.read_pdbstr.assert_called_once_with(_PDB, "AF_P04637")
-    pymol_cmd.spectrum.assert_called_once()
+    assert pymol_cmd.color.call_count == 4
     pymol_cmd.ramp_new.assert_called_once()
     assert calls[0][0].endswith("/P04637")
+
+
+def test_af_model_id_selects_fragment(pymol_cmd, monkeypatch):
+    entries = [
+        {"entryId": "AF-Q8WZ42-F1", "pdbUrl": "https://af/f1.pdb"},
+        {"entryId": "AF-Q8WZ42-F2", "pdbUrl": "https://af/f2.pdb"},
+    ]
+    calls = _http(
+        monkeypatch,
+        {"https://alphafold.ebi.ac.uk/api": json.dumps(entries), "https://af/": _PDB},
+    )
+    assert fetch_fold("AF-Q8WZ42-F2-model_v4", color=0) == "AF_Q8WZ42_F2"
+    assert calls[-1][0] == "https://af/f2.pdb"
 
 
 def test_sequence_goes_to_esmfold(pymol_cmd, monkeypatch):
@@ -69,7 +85,7 @@ def test_sequence_goes_to_esmfold(pymol_cmd, monkeypatch):
     name = fetch_fold(_SEQ, color=0)
     assert name.startswith("ESM_")
     assert calls[0][1] == _SEQ.encode()
-    pymol_cmd.spectrum.assert_not_called()
+    pymol_cmd.color.assert_not_called()
 
 
 def test_missing_accession_falls_back_to_esmfold(pymol_cmd, monkeypatch):

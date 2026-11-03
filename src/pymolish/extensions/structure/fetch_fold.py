@@ -19,6 +19,7 @@ _TAG = "structure.fetch_fold"
 _ACCESSION_RE = re.compile(
     r"^([OPQ][0-9][A-Z0-9]{3}[0-9]|[A-NR-Z][0-9]([A-Z][A-Z0-9]{2}[0-9]){1,2})$"
 )
+_AF_MODEL_RE = re.compile(r"^AF-([A-Z0-9]+)-F(\d+)(?:-MODEL_V\d+)?(?:\.PDB|\.CIF)?$")
 _AMINO_ACIDS = frozenset("ACDEFGHIKLMNPQRSTVWY")
 _ESMFOLD_MAX_LEN = 400
 
@@ -42,6 +43,12 @@ def _normalize_sequence(query: str) -> str:
     return "".join(query.split()).upper()
 
 
+def _parse_af_model_id(query: str) -> tuple[str, int] | None:
+    """Return ``(accession, fragment)`` for an AF model ID like ``AF-P04637-F1``."""
+    m = _AF_MODEL_RE.match(query.strip().upper())
+    return (m.group(1), int(m.group(2))) if m else None
+
+
 def _is_accession(query: str) -> bool:
     return bool(_ACCESSION_RE.match(query.strip().upper()))
 
@@ -51,8 +58,12 @@ def _is_sequence(query: str) -> bool:
     return bool(seq) and set(seq) <= _AMINO_ACIDS
 
 
-def _fetch_alphafold(acc: str) -> str | None:
-    """Return the PDB text for *acc* from AlphaFold DB, or ``None`` if absent."""
+def _fetch_alphafold(acc: str, fragment: int = 1) -> str | None:
+    """Return the PDB text for *acc* from AlphaFold DB, or ``None`` if absent.
+
+    Long proteins are split into fragments ``AF-<acc>-F1``, ``F2``...; the
+    entry whose ``entryId`` matches *fragment* is used, else the first one.
+    """
     try:
         entries = json.loads(_http_text(_AFDB_API.format(acc=acc), timeout=30))
     except urllib.error.HTTPError as exc:
@@ -61,7 +72,12 @@ def _fetch_alphafold(acc: str) -> str | None:
         raise
     if not entries:
         return None
-    return _http_text(entries[0]["pdbUrl"])
+    wanted = f"AF-{acc}-F{fragment}"
+    entry = next(
+        (e for e in entries if str(e.get("entryId", "")).upper() == wanted),
+        entries[0],
+    )
+    return _http_text(entry["pdbUrl"])
 
 
 def _uniprot_fasta(acc: str) -> str:
@@ -92,13 +108,17 @@ def fetch_fold(
 ) -> str | None:
     """Fetch a predicted structure for a UniProt accession or a sequence.
 
-    Accessions are looked up in AlphaFold DB; raw amino-acid sequences are
-    folded with the public ESMFold API.  An accession missing from AlphaFold
+    UniProt accessions and AlphaFold model IDs (``AF-P04637-F1``, optionally
+    with ``-model_v4``) are looked up in AlphaFold DB; raw amino-acid
+    sequences are folded with the public ESMFold API.  The input type is
+    detected automatically.  An accession missing from AlphaFold
     DB falls back to its UniProt sequence folded by ESMFold.  The loaded
-    model is colored by pLDDT with a legend (see :func:`color_plddt`).
+    model is colored with the AlphaFold confidence bins and a legend (see
+    :func:`color_plddt`).
 
     Args:
-        query: UniProt accession (e.g. ``P04637``) or one-letter sequence.
+        query: UniProt accession (``P04637``), AlphaFold model ID
+            (``AF-P04637-F1``) or one-letter amino-acid sequence.
         name: Object name. Defaults to ``AF_<acc>`` or ``ESM_<hash>``.
         source: ``"auto"`` (detect from *query*), ``"alphafold"`` or
             ``"esmfold"``.
@@ -111,6 +131,7 @@ def fetch_fold(
 
     Examples:
         PyMOL> fetch_fold P04637
+        PyMOL> fetch_fold AF-P04637-F1
         PyMOL> fetch_fold MKTAYIAKQRQISFVKSHFSRQLEERLGLIEVQ
         PyMOL> fetch_fold P04637, p53_model, color=0
         PyMOL> fetch_fold P04637, source=esmfold
@@ -132,7 +153,7 @@ def fetch_fold(
         plog(_TAG, f"unknown source '{source}' (auto|alphafold|esmfold)", "error")
         return None
     if source == "auto":
-        if _is_accession(query):
+        if _is_accession(query) or _parse_af_model_id(query):
             source = "alphafold"
         elif _is_sequence(query):
             source = "esmfold"
@@ -143,18 +164,22 @@ def fetch_fold(
     try:
         pdb_text = None
         if source == "alphafold":
-            if not _is_accession(query):
-                plog(_TAG, f"'{query}' is not a UniProt accession", "error")
+            parsed = _parse_af_model_id(query)
+            if parsed:
+                acc, fragment = parsed
+            elif _is_accession(query):
+                acc, fragment = query.strip().upper(), 1
+            else:
+                plog(_TAG, f"'{query}' is not a UniProt accession or AF ID", "error")
                 return None
-            acc = query.strip().upper()
-            name = name or f"AF_{acc}"
+            name = name or (f"AF_{acc}" if fragment == 1 else f"AF_{acc}_F{fragment}")
             if verbose:
-                plog(_TAG, f"fetching {acc} from AlphaFold DB…")
-            pdb_text = _fetch_alphafold(acc)
+                plog(_TAG, f"fetching AF-{acc}-F{fragment} from AlphaFold DB…")
+            pdb_text = _fetch_alphafold(acc, fragment)
             if pdb_text is None:
                 plog(_TAG, f"{acc} not in AlphaFold DB - folding with ESMFold", "warn")
                 query, source = _uniprot_fasta(acc), "esmfold"
-                name = name if name != f"AF_{acc}" else f"ESM_{acc}"
+                name = f"ESM_{acc}" if name.startswith(f"AF_{acc}") else name
         if source == "esmfold":
             seq = _normalize_sequence(query)
             if not _is_sequence(seq):

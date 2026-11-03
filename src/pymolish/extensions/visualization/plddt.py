@@ -9,7 +9,7 @@ from ...core.logging import plog
 from ...core.validators import coerce_bool
 
 _TAG = "viz.plddt"
-_LEGEND = "plddt_legend"
+_LEGEND = "AF_pLDDT_legend"
 
 # Official AlphaFold DB bin colors: very low, low, confident, very high.
 _AF_COLORS = {
@@ -26,29 +26,30 @@ _AF_BINS = (
 )
 
 PLDDT_PALETTES = {
-    "gradient": "Continuous red (0) -> yellow (50) -> blue (100)",
     "af": "AlphaFold DB bins: orange <50, yellow <70, light blue <90, blue >=90",
+    "gradient": "Continuous red (0) -> yellow (50) -> blue (100)",
 }
 
 
 def color_plddt(
     selection: str = "all",
     legend: bool | str | int = True,
-    palette: str = "gradient",
+    palette: str = "af",
     verbose: bool | str | int = True,
 ) -> int:
     """Color atoms by pLDDT confidence (B-factor column) and draw a legend.
 
     AlphaFold DB and ESMFold models store the per-residue pLDDT score
     (0-100) in the B-factor field, so no parsing is required.  The legend is
-    a PyMOL ramp object named ``plddt_legend``; enabled ramps draw a labelled
+    a PyMOL ramp object named ``AF_pLDDT_legend``; enabled ramps draw a labelled
     color bar in the viewport.
 
     Args:
         selection: PyMOL selection to color. Default: ``"all"``.
-        legend: Create/refresh the ``plddt_legend`` ramp. Default: ``True``.
-        palette: ``"gradient"`` (red -> yellow -> blue, continuous) or
-            ``"af"`` (the four AlphaFold DB confidence bins).
+        legend: Create/refresh the ``AF_pLDDT_legend`` ramp. Default: ``True``.
+        palette: ``"af"`` (default; the four AlphaFold DB confidence bins:
+            orange <50, yellow <70, light blue <90, dark blue >=90) or
+            ``"gradient"`` (continuous red -> yellow -> blue over 0-100).
         verbose: When truthy, log a summary. Default: ``True``.
 
     Returns:
@@ -57,7 +58,7 @@ def color_plddt(
 
     Examples:
         PyMOL> color_plddt
-        PyMOL> color_plddt AF_P04637, palette=af
+        PyMOL> color_plddt AF_P04637, palette=gradient
         PyMOL> color_plddt my_model, 0
 
     Since:

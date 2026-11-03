@@ -206,13 +206,17 @@ fetch_fold P04637, source=esmfold
 ```
 Fetch a predicted structure for a UniProt accession or a sequence.
 
-Accessions are looked up in AlphaFold DB; raw amino-acid sequences are
-folded with the public ESMFold API.  An accession missing from AlphaFold
+UniProt accessions and AlphaFold model IDs (``AF-P04637-F1``, optionally
+with ``-model_v4``) are looked up in AlphaFold DB; raw amino-acid
+sequences are folded with the public ESMFold API.  The input type is
+detected automatically.  An accession missing from AlphaFold
 DB falls back to its UniProt sequence folded by ESMFold.  The loaded
-model is colored by pLDDT with a legend (see :func:`color_plddt`).
+model is colored with the AlphaFold confidence bins and a legend (see
+:func:`color_plddt`).
 
 Args:
-    query: UniProt accession (e.g. ``P04637``) or one-letter sequence.
+    query: UniProt accession (``P04637``), AlphaFold model ID
+        (``AF-P04637-F1``) or one-letter amino-acid sequence.
     name: Object name. Defaults to ``AF_<acc>`` or ``ESM_<hash>``.
     source: ``"auto"`` (detect from *query*), ``"alphafold"`` or
         ``"esmfold"``.
@@ -225,6 +229,7 @@ Returns:
 
 Examples:
     PyMOL> fetch_fold P04637
+    PyMOL> fetch_fold AF-P04637-F1
     PyMOL> fetch_fold MKTAYIAKQRQISFVKSHFSRQLEERLGLIEVQ
     PyMOL> fetch_fold P04637, p53_model, color=0
     PyMOL> fetch_fold P04637, source=esmfold

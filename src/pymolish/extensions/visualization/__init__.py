@@ -181,7 +181,7 @@ def __init_plugin__(app: object | None = None) -> None:
         ),
         examples=[
             "color_plddt",
-            "color_plddt AF_P04637, palette=af",
+            "color_plddt AF_P04637, palette=gradient",
             "color_plddt my_model, 0",
         ],
         tags=["color", "plddt", "alphafold", "esmfold", "confidence"],

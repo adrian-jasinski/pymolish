@@ -15,7 +15,7 @@ loaded themselves.
 | Command        | Package                     | Args                                                          |
 |----------------|-----------------------------|---------------------------------------------------------------|
 | `fetch_fold`   | `extensions/structure/`     | `query, name=None, source=auto\|alphafold\|esmfold, color=1, legend=1` |
-| `color_plddt`  | `extensions/visualization/` | `selection=all, legend=1, palette=gradient\|af`               |
+| `color_plddt`  | `extensions/visualization/` | `selection=all, legend=1, palette=af\|gradient`               |
 
 `fetch_fold` calls `color_plddt` at the end; no shared state beyond that.
 
@@ -38,13 +38,13 @@ Both services store pLDDT in the B-factor column, so no parsing needed.
 
 ## Coloring + legend (native PyMOL, no deps)
 
-- `gradient` (default, what the user asked for):
+- `gradient` (optional, continuous):
   `cmd.spectrum("b", "red_yellow_blue", sel, minimum=0, maximum=100)`; PyMOL's
   built-in `blue` is already the dark end. If a darker top is wanted, `cmd.set_color`
   a custom color and use it in the spectrum palette string (custom names are accepted).
-- `af` palette: the standard AlphaFold 4 bins via `cmd.color` on `b<50`, `b<70`, `b<90`,
+- `af` palette (default, chosen after review: linear 0-100 hides the 50-90 band): the standard AlphaFold 4 bins via `cmd.color` on `b<50`, `b<70`, `b<90`,
   rest (orange `#FF7D45`, yellow `#FFDB13`, light blue `#65CBF3`, dark blue `#0053D6`).
-- **Legend**: `cmd.ramp_new("plddt_legend", obj, [0, 50, 70, 90, 100], [colors...])`.
+- **Legend**: `cmd.ramp_new("AF_pLDDT_legend", obj, [0, 50, 70, 90, 100], [colors...])`.
   An enabled ramp object draws a horizontal color bar with labels in the viewport —
   that is the legend, nothing custom to draw. Delete/recreate on each call so repeated
   runs don't stack. `legend=0` skips it.
