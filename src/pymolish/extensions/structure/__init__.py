@@ -1,4 +1,4 @@
-"""Structure analysis extensions: multialign, clean, cluster_ligands, fetch_uniprot."""
+"""Structure analysis extensions: multialign, clean, cluster_ligands, fetch_*."""
 
 from __future__ import annotations
 
@@ -13,6 +13,7 @@ def __init_plugin__(app: object | None = None) -> None:
     """Register structure-analysis commands and their autocompletions."""
     from .clean import remove_ions, remove_metals
     from .cluster_ligands import cluster_ligands_by_position, cluster_ligands_from_group
+    from .fetch_fold import fetch_fold
     from .fetch_uniprot import (
         fetch_by_uniprot,
         fetch_uniprot_ligands,
@@ -178,6 +179,27 @@ def __init_plugin__(app: object | None = None) -> None:
         ],
         tags=["fetch", "uniprot", "ligands", "network"],
         see_also=["fetch_by_uniprot", "list_uniprot_structures"],
+    )
+
+    # ------------------------------------------------------------------
+    # fetch_fold
+    # ------------------------------------------------------------------
+    registry.register(
+        "fetch_fold",
+        fetch_fold,
+        category=CATEGORY,
+        description=(
+            "Fetch an AlphaFold DB (UniProt accession) or ESMFold (sequence) "
+            "model and color it by pLDDT with a legend"
+        ),
+        examples=[
+            "fetch_fold P04637",
+            "fetch_fold MKTAYIAKQRQISFVKSHFSRQLEERLGLIEVQ",
+            "fetch_fold P04637, p53_model, color=0",
+            "fetch_fold P04637, source=esmfold",
+        ],
+        tags=["fetch", "alphafold", "esmfold", "plddt", "prediction", "network"],
+        see_also=["color_plddt", "fetch_by_uniprot"],
     )
 
     # ------------------------------------------------------------------

@@ -8,5 +8,5 @@ Auto-generated from the command registry by `scripts/generate_docs.py`. Run `uv 
 - [I/O](i_o.md) — 7 command(s)
 - [Meta](meta.md) — 6 command(s)
 - [Selection](selection.md) — 3 command(s)
-- [Structure](structure.md) — 9 command(s)
-- [Visualization](visualization.md) — 8 command(s)
+- [Structure](structure.md) — 10 command(s)
+- [Visualization](visualization.md) — 9 command(s)

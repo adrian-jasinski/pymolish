@@ -84,7 +84,9 @@ This uses `pip`, or `uv pip` if pip is not available. PyQt5 (`gui`) is only inst
 If you develop PyMOLish or prefer `pip`, install the package into PyMOL's Python instead of (or as well as) using the ZIP. First find that interpreter — in the PyMOL command line run:
 
 ```python
-import sys; print(sys.executable)
+import sys
+
+print(sys.executable)
 ```
 
 Then from a checkout:
@@ -107,7 +109,9 @@ The plugin was not loaded. Open Plugin Manager → Installed Plugins and check t
 The package was only partly installed — usually a stale copy in PyMOL's startup directory. Uninstall `pymolish` in the Plugin Manager, restart, and install the ZIP again. To confirm, run in PyMOL:
 
 ```python
-import pymolish.extensions; print(pymolish.extensions.__file__)
+import pymolish.extensions
+
+print(pymolish.extensions.__file__)
 ```
 
 An `ImportError` means PyMOL cannot see the full package.

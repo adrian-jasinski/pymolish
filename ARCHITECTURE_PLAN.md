@@ -123,16 +123,17 @@ Evolves the PoC registry with these improvements:
 @dataclass
 class CommandInfo:
     """Metadata for a registered command."""
+
     name: str
     function: Callable
     category: str
-    description: str          # One-line summary
-    usage: str                # Auto-generated or explicit
-    examples: list[str]       # PyMOL terminal examples
-    since: str                # Version introduced (e.g. "1.0.0")
-    see_also: list[str]       # Related command names
-    tags: list[str]           # Searchable tags
-    module: str               # Source module path
+    description: str  # One-line summary
+    usage: str  # Auto-generated or explicit
+    examples: list[str]  # PyMOL terminal examples
+    since: str  # Version introduced (e.g. "1.0.0")
+    see_also: list[str]  # Related command names
+    tags: list[str]  # Searchable tags
+    module: str  # Source module path
 
 
 class CommandRegistry:
@@ -231,6 +232,7 @@ Each category under `extensions/` follows this pattern:
 
 CATEGORY = "I/O"
 
+
 def __init_plugin__(app=None):
     """Register all I/O commands."""
     from pymolish.core.registry import CommandRegistry
@@ -261,7 +263,9 @@ def __init_plugin__(app=None):
     # ... more registrations ...
 
     # Register autocompletions
-    autocomplete.register("load_files", 0, autocomplete.completers.directory, "directory")
+    autocomplete.register(
+        "load_files", 0, autocomplete.completers.directory, "directory"
+    )
     autocomplete.register("load_files", 1, autocomplete.completers.format, "suffix")
     # ...
     autocomplete.apply()  # Push to cmd.auto_arg
@@ -443,6 +447,7 @@ GUI dialogs are registered as Plugin menu items only if PyQt is available:
 # In extensions/io/__init__.py, inside __init_plugin__:
 try:
     from pymol.plugins import addmenuitemqt
+
     addmenuitemqt("Batch Load/Export", lambda: _show_io_gui())
 except ImportError:
     pass  # PyQt not available — terminal commands still work

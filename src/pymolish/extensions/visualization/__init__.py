@@ -1,4 +1,4 @@
-"""Color and visualization extensions: palettes, color_group, color_ss, ui_scale."""
+"""Visualization extensions: palettes, color_group, color_ss, plddt, ui_scale."""
 
 from __future__ import annotations
 
@@ -22,6 +22,7 @@ def __init_plugin__(app: object | None = None) -> None:
         list_available_palettes,
         register_extended_colors,
     )
+    from .plddt import PLDDT_PALETTES, color_plddt
     from .ui_scale import ui_scale, ui_scale_reset
 
     registry = CommandRegistry.instance()
@@ -169,8 +170,34 @@ def __init_plugin__(app: object | None = None) -> None:
     )
 
     # ------------------------------------------------------------------
+    # plddt
+    # ------------------------------------------------------------------
+    registry.register(
+        "color_plddt",
+        color_plddt,
+        category=CATEGORY,
+        description=(
+            "Color a predicted model by pLDDT confidence (B-factor) and draw a legend"
+        ),
+        examples=[
+            "color_plddt",
+            "color_plddt AF_P04637, palette=af",
+            "color_plddt my_model, 0",
+        ],
+        tags=["color", "plddt", "alphafold", "esmfold", "confidence"],
+        see_also=["fetch_fold", "color_secondary_structure"],
+    )
+
+    # ------------------------------------------------------------------
     # Autocompletion
     # ------------------------------------------------------------------
+    autocomplete.register("color_plddt", 0, completers.object_name, "selection")
+    autocomplete.register(
+        "color_plddt",
+        2,
+        lambda token: [p for p in PLDDT_PALETTES if p.startswith(token.lower())],
+        "palette",
+    )
 
     autocomplete.register("register_extended_colors", 0, _palette_completer, "palette")
 

@@ -15,6 +15,7 @@ _EXPECTED_COMMANDS = (
     "fetch_by_uniprot",
     "list_uniprot_structures",
     "fetch_uniprot_ligands",
+    "fetch_fold",
 )
 
 

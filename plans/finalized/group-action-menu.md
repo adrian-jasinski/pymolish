@@ -46,6 +46,7 @@ New file `src/pymolish/extensions/groups/_menu.py`:
 
 ```python
 """Inject pymolish group commands into PyMOL's group Action (A) menu."""
+
 from __future__ import annotations
 
 from ...core.group_utils import GroupUtils
@@ -98,8 +99,9 @@ def install() -> bool:
 Hook-up: in `extensions/groups/__init__.py::__init_plugin__`, after registrations:
 
 ```python
-    from ._menu import install as _install_menu
-    _install_menu()
+from ._menu import install as _install_menu
+
+_install_menu()
 ```
 
 Notes

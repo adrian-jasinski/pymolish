@@ -1,12 +1,13 @@
 # Structure
 
-_9 command(s). Generated from the command registry — do not edit by hand._
+_10 command(s). Generated from the command registry — do not edit by hand._
 
 ## Commands in this category
 
 - [`cluster_ligands_by_position`](#cluster_ligands_by_position) — Cluster ligands by 3-D centroid into new PyMOL groups (requires numpy)
 - [`cluster_ligands_from_group`](#cluster_ligands_from_group) — Cluster ligands from a named PyMOL group (requires numpy)
 - [`fetch_by_uniprot`](#fetch_by_uniprot) — Fetch PDB structures for a UniProt accession via RCSB/UniProt APIs (biopython optional)
+- [`fetch_fold`](#fetch_fold) — Fetch an AlphaFold DB (UniProt accession) or ESMFold (sequence) model and color it by pLDDT with a legend
 - [`fetch_uniprot_ligands`](#fetch_uniprot_ligands) — Load all distinct ligands (small molecules) from a UniProt accession's PDB entries as ideal 3D models
 - [`list_objects_with_prefix`](#list_objects_with_prefix) — List PyMOL objects whose names start with a given prefix
 - [`list_uniprot_structures`](#list_uniprot_structures) — List PDB structures for a UniProt accession without loading them (biopython optional)
@@ -178,6 +179,61 @@ Since:
 
 See Also:
     list_uniprot_structures
+```
+
+</details>
+
+### `fetch_fold`
+
+Fetch an AlphaFold DB (UniProt accession) or ESMFold (sequence) model and color it by pLDDT with a legend
+
+- **Usage:** `fetch_fold <query> [name=''] [source='auto'] [color=True] [legend=True] [verbose=True]`
+- **Since:** 1.0.0
+- **Tags:** `fetch`, `alphafold`, `esmfold`, `plddt`, `prediction`, `network`
+- **See also:** `color_plddt`, `fetch_by_uniprot`
+
+**Examples:**
+
+```
+fetch_fold P04637
+fetch_fold MKTAYIAKQRQISFVKSHFSRQLEERLGLIEVQ
+fetch_fold P04637, p53_model, color=0
+fetch_fold P04637, source=esmfold
+```
+
+<details><summary>Full docstring</summary>
+
+```
+Fetch a predicted structure for a UniProt accession or a sequence.
+
+Accessions are looked up in AlphaFold DB; raw amino-acid sequences are
+folded with the public ESMFold API.  An accession missing from AlphaFold
+DB falls back to its UniProt sequence folded by ESMFold.  The loaded
+model is colored by pLDDT with a legend (see :func:`color_plddt`).
+
+Args:
+    query: UniProt accession (e.g. ``P04637``) or one-letter sequence.
+    name: Object name. Defaults to ``AF_<acc>`` or ``ESM_<hash>``.
+    source: ``"auto"`` (detect from *query*), ``"alphafold"`` or
+        ``"esmfold"``.
+    color: Color by pLDDT after loading. Default: ``True``.
+    legend: Draw the pLDDT legend ramp. Default: ``True``.
+    verbose: When truthy, log progress. Default: ``True``.
+
+Returns:
+    The loaded object name, or ``None`` on failure.
+
+Examples:
+    PyMOL> fetch_fold P04637
+    PyMOL> fetch_fold MKTAYIAKQRQISFVKSHFSRQLEERLGLIEVQ
+    PyMOL> fetch_fold P04637, p53_model, color=0
+    PyMOL> fetch_fold P04637, source=esmfold
+
+Since:
+    0.1.21
+
+See Also:
+    color_plddt, fetch_by_uniprot
 ```
 
 </details>

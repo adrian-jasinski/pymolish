@@ -1,11 +1,12 @@
 # Visualization
 
-_8 command(s). Generated from the command registry — do not edit by hand._
+_9 command(s). Generated from the command registry — do not edit by hand._
 
 ## Commands in this category
 
 - [`color_group_with_gradient`](#color_group_with_gradient) — Color objects in a group with a gradient derived from a single base color
 - [`color_group_with_palette`](#color_group_with_palette) — Color objects in a group or selection with an extended palette
+- [`color_plddt`](#color_plddt) — Color a predicted model by pLDDT confidence (B-factor) and draw a legend
 - [`color_secondary_structure`](#color_secondary_structure) — Color secondary structure elements using a predefined palette
 - [`list_available_palettes`](#list_available_palettes) — List all available color palettes with descriptions
 - [`list_cartoon_palettes`](#list_cartoon_palettes) — List all available secondary-structure color palettes
@@ -117,6 +118,58 @@ Since:
 
 See Also:
     color_group_with_gradient, register_extended_colors, list_available_palettes
+```
+
+</details>
+
+### `color_plddt`
+
+Color a predicted model by pLDDT confidence (B-factor) and draw a legend
+
+- **Usage:** `color_plddt [selection='all'] [legend=True] [palette='gradient'] [verbose=True]`
+- **Since:** 1.0.0
+- **Tags:** `color`, `plddt`, `alphafold`, `esmfold`, `confidence`
+- **See also:** `fetch_fold`, `color_secondary_structure`
+
+**Examples:**
+
+```
+color_plddt
+color_plddt AF_P04637, palette=af
+color_plddt my_model, 0
+```
+
+<details><summary>Full docstring</summary>
+
+```
+Color atoms by pLDDT confidence (B-factor column) and draw a legend.
+
+AlphaFold DB and ESMFold models store the per-residue pLDDT score
+(0-100) in the B-factor field, so no parsing is required.  The legend is
+a PyMOL ramp object named ``plddt_legend``; enabled ramps draw a labelled
+color bar in the viewport.
+
+Args:
+    selection: PyMOL selection to color. Default: ``"all"``.
+    legend: Create/refresh the ``plddt_legend`` ramp. Default: ``True``.
+    palette: ``"gradient"`` (red -> yellow -> blue, continuous) or
+        ``"af"`` (the four AlphaFold DB confidence bins).
+    verbose: When truthy, log a summary. Default: ``True``.
+
+Returns:
+    Number of atoms in *selection*; ``0`` when it is empty or the
+    palette is unknown.
+
+Examples:
+    PyMOL> color_plddt
+    PyMOL> color_plddt AF_P04637, palette=af
+    PyMOL> color_plddt my_model, 0
+
+Since:
+    0.1.21
+
+See Also:
+    fetch_fold, color_secondary_structure
 ```
 
 </details>

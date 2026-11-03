@@ -12,6 +12,7 @@ _EXPECTED_COMMANDS = (
     "color_group_with_gradient",
     "color_secondary_structure",
     "list_cartoon_palettes",
+    "color_plddt",
 )
 
 
