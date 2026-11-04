@@ -90,6 +90,15 @@ A longer walkthrough, including ligand clustering and UniProt fetching, is in th
 | [GUI features](docs/gui.md) | Group action menu entries and keyboard shortcuts |
 | [Command reference](docs/commands/README.md) | Every command with arguments and examples, by category |
 
+### Video tutorials
+
+| Video | What it covers |
+|-------|----------------|
+| [Two-minute tour](https://www.youtube.com/watch?v=q6c24OJZzd4) | Install, load files into a group, step through ligands from the GUI and keyboard |
+| [Meta commands](https://youtu.be/yniKv7f4aDE) | `pymolish_list`, `pymolish_help`, `pymolish_search` and the other `pymolish_*` commands |
+| [fetch_by_uniprot and fetch_uniprot_ligands](https://www.youtube.com/watch?v=TSpykMor8wE) | Fetch all PDB entries and their ligands for a UniProt accession |
+| [fetch_fold](https://www.youtube.com/watch?v=3Kz2zMBSBvE) | Fetch AlphaFold DB / ESMFold models and color them by pLDDT |
+
 ### Command categories
 
 | Category | Commands | What it does |

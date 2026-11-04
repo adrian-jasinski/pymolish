@@ -126,6 +126,7 @@ def _register_meta_commands() -> None:
     from .core.autocompletion import AutocompletionRegistry
     from .core.deps import EXTRAS, pymolish_install_deps
     from .core.registry import CommandRegistry
+    from .core.upgrade import pymolish_reload, pymolish_upgrade
 
     registry = CommandRegistry.instance()
 
@@ -175,6 +176,20 @@ def _register_meta_commands() -> None:
                 "pymolish_install_deps numpy matplotlib, dry_run=1",
             ],
             ["meta", "install", "dependencies"],
+        ),
+        (
+            "pymolish_upgrade",
+            pymolish_upgrade,
+            "Install the newest plugin ZIP from GitHub and offer to reload",
+            ["pymolish_upgrade", "pymolish_upgrade check_only=1"],
+            ["meta", "upgrade", "update"],
+        ),
+        (
+            "pymolish_reload",
+            pymolish_reload,
+            "Reload pymolish in place (after installing a new plugin ZIP)",
+            ["pymolish_reload"],
+            ["meta", "upgrade", "reload"],
         ),
     ]
 

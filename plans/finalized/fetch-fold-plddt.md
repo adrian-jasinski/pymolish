@@ -44,10 +44,12 @@ Both services store pLDDT in the B-factor column, so no parsing needed.
   a custom color and use it in the spectrum palette string (custom names are accepted).
 - `af` palette (default, chosen after review: linear 0-100 hides the 50-90 band): the standard AlphaFold 4 bins via `cmd.color` on `b<50`, `b<70`, `b<90`,
   rest (orange `#FF7D45`, yellow `#FFDB13`, light blue `#65CBF3`, dark blue `#0053D6`).
-- **Legend**: `cmd.ramp_new("AF_pLDDT_legend", obj, [0, 50, 70, 90, 100], [colors...])`.
-  An enabled ramp object draws a horizontal color bar with labels in the viewport —
-  that is the legend, nothing custom to draw. Delete/recreate on each call so repeated
-  runs don't stack. `legend=0` skips it.
+- **Legend** (`AF_pLDDT_legend`, deleted/recreated on each call, `legend=0` skips it):
+  - `gradient`: `cmd.ramp_new(..., [0, 50, 100], [red, yellow, blue])` color bar.
+  - `af`: PyMOL's ramp legend only prints min/max as `%0.3f`, so bin labels are
+    impossible there. Instead: four `cmd.pseudoatom` spheres beside the model
+    (right of `get_extent`), colored per bin, labelled `<50`, `50-70`, `70-90`,
+    `90-100`. Rotates with the scene; appears in ray-traced output.
 
 ## Steps
 

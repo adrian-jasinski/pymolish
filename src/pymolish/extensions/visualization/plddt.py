@@ -18,17 +18,52 @@ _AF_COLORS = {
     "plddt_confident": [0.40, 0.80, 0.95],  # #65CBF3
     "plddt_very_high": [0.00, 0.33, 0.84],  # #0053D6
 }
+# (color, selection expression, legend label)
 _AF_BINS = (
-    ("plddt_very_low", "b < 50"),
-    ("plddt_low", "b >= 50 and b < 70"),
-    ("plddt_confident", "b >= 70 and b < 90"),
-    ("plddt_very_high", "b >= 90"),
+    ("plddt_very_low", "b < 50", "<50"),
+    ("plddt_low", "b >= 50 and b < 70", "50-70"),
+    ("plddt_confident", "b >= 70 and b < 90", "70-90"),
+    ("plddt_very_high", "b >= 90", "90-100"),
 )
 
 PLDDT_PALETTES = {
     "af": "AlphaFold DB bins: orange <50, yellow <70, light blue <90, blue >=90",
     "gradient": "Continuous red (0) -> yellow (50) -> blue (100)",
 }
+
+
+def _ramp_legend(selection: str) -> None:
+    """Continuous 0-100 color bar (PyMOL ramp; labels are fixed to min/max)."""
+    # ponytail: ramp_new needs a source object; the first object in the
+    # selection works for a legend (only the range is displayed).
+    objects = cmd.get_object_list(selection) or []
+    if not objects:
+        plog(_TAG, "no object in selection - legend skipped", "warn")
+        return
+    cmd.ramp_new(_LEGEND, objects[0], [0, 50, 100], ["red", "yellow", "blue"])
+
+
+def _key_legend(selection: str, spacing: float = 5.0, gap: float = 10.0) -> None:
+    """Four labelled spheres beside *selection*, one per AlphaFold bin.
+
+    PyMOL's ramp legend only prints its min/max as ``%0.3f``, so a key built
+    from pseudoatoms is the native way to show exact bin labels.
+    """
+    (_xmin, _ymin, zmin), (xmax, ymax, _zmax) = cmd.get_extent(selection)
+    x = xmax + gap
+    for i, (color, _expr, label) in enumerate(_AF_BINS):
+        cmd.pseudoatom(
+            _LEGEND,
+            pos=[x, ymax - i * spacing, zmin],
+            label=label,
+            color=color,
+            name=f"L{i + 1}",
+        )
+    cmd.show_as("spheres", _LEGEND)
+    cmd.show("labels", _LEGEND)
+    cmd.set("sphere_scale", 1.5, _LEGEND)
+    cmd.set("label_size", 24, _LEGEND)
+    cmd.set("label_position", [3.5, 0, 0], _LEGEND)
 
 
 def color_plddt(
@@ -40,9 +75,11 @@ def color_plddt(
     """Color atoms by pLDDT confidence (B-factor column) and draw a legend.
 
     AlphaFold DB and ESMFold models store the per-residue pLDDT score
-    (0-100) in the B-factor field, so no parsing is required.  The legend is
-    a PyMOL ramp object named ``AF_pLDDT_legend``; enabled ramps draw a labelled
-    color bar in the viewport.
+    (0-100) in the B-factor field, so no parsing is required.  The legend
+    object is named ``AF_pLDDT_legend``: for ``"af"`` it is a key of four
+    colored spheres labelled ``<50``, ``50-70``, ``70-90``, ``90-100``
+    placed beside the model (rotates with the scene, appears in ray-traced
+    images); for ``"gradient"`` it is a PyMOL ramp color bar.
 
     Args:
         selection: PyMOL selection to color. Default: ``"all"``.
@@ -87,28 +124,16 @@ def color_plddt(
 
     if palette == "gradient":
         cmd.spectrum("b", "red_yellow_blue", selection, minimum=0, maximum=100)
-        ramp_values, ramp_colors = [0, 50, 100], ["red", "yellow", "blue"]
     else:
-        for color, expr in _AF_BINS:
+        for color, expr, _label in _AF_BINS:
             cmd.color(color, f"({selection}) and {expr}")
-        ramp_values = [0, 50, 70, 90, 100]
-        ramp_colors = [
-            "plddt_very_low",
-            "plddt_low",
-            "plddt_confident",
-            "plddt_very_high",
-            "plddt_very_high",
-        ]
 
     if legend:
         cmd.delete(_LEGEND)
-        # ponytail: ramp_new needs a source object; the first object in the
-        # selection works for a legend (only the range is displayed).
-        objects = cmd.get_object_list(selection) or []
-        if objects:
-            cmd.ramp_new(_LEGEND, objects[0], ramp_values, ramp_colors)
+        if palette == "gradient":
+            _ramp_legend(selection)
         else:
-            plog(_TAG, "no object in selection - legend skipped", "warn")
+            _key_legend(selection)
 
     if verbose:
         plog(_TAG, f"colored {n_atoms} atom(s) in '{selection}' by pLDDT ({palette})")

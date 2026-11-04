@@ -36,10 +36,11 @@ def test_install_wraps_group_action(fake_menu, pymol_cmd):
 
 
 def test_install_is_idempotent(fake_menu, pymol_cmd):
+    pristine = fake_menu.group_action
     _menu.install()
-    first = fake_menu.group_action
     assert _menu.install() is True
-    assert fake_menu.group_action is first
+    # re-wraps the pristine function (so a reload picks up new code), never a wrapper
+    assert fake_menu.group_action._original is pristine
     expected = 10 + len(_menu.pymolish_group_items("g"))
     assert len(fake_menu.group_action(None, "g")) == expected
 

@@ -55,8 +55,8 @@ def install() -> bool:
     original: Callable | None = getattr(menu, "group_action", None)
     if original is None:
         return False
-    if getattr(original, "_pymolish", False):
-        return True
+    # Re-wrap the pristine function so a pymolish_reload picks up new menu code.
+    original = getattr(original, "_original", original)
 
     def group_action(self_cmd: object, sele: str) -> list:
         items = list(original(self_cmd, sele))

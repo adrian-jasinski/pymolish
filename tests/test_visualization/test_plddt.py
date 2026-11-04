@@ -24,6 +24,18 @@ def test_af_bins_default_and_no_legend(pymol_cmd):
     assert pymol_cmd.color.call_count == 4
     pymol_cmd.spectrum.assert_not_called()
     pymol_cmd.ramp_new.assert_not_called()
+    pymol_cmd.pseudoatom.assert_not_called()
+
+
+def test_af_key_legend_labels(pymol_cmd):
+    pymol_cmd.count_atoms.return_value = 5
+    pymol_cmd.get_extent.return_value = [[0, 0, 0], [20, 30, 40]]
+    color_plddt("m")
+    pymol_cmd.delete.assert_called_once_with("AF_pLDDT_legend")
+    pymol_cmd.ramp_new.assert_not_called()
+    labels = [c.kwargs["label"] for c in pymol_cmd.pseudoatom.call_args_list]
+    assert labels == ["<50", "50-70", "70-90", "90-100"]
+    assert pymol_cmd.pseudoatom.call_args_list[0].kwargs["pos"] == [30, 30, 0]
 
 
 def test_empty_selection_and_bad_palette(pymol_cmd):

@@ -145,9 +145,11 @@ color_plddt my_model, 0
 Color atoms by pLDDT confidence (B-factor column) and draw a legend.
 
 AlphaFold DB and ESMFold models store the per-residue pLDDT score
-(0-100) in the B-factor field, so no parsing is required.  The legend is
-a PyMOL ramp object named ``AF_pLDDT_legend``; enabled ramps draw a labelled
-color bar in the viewport.
+(0-100) in the B-factor field, so no parsing is required.  The legend
+object is named ``AF_pLDDT_legend``: for ``"af"`` it is a key of four
+colored spheres labelled ``<50``, ``50-70``, ``70-90``, ``90-100``
+placed beside the model (rotates with the scene, appears in ray-traced
+images); for ``"gradient"`` it is a PyMOL ramp color bar.
 
 Args:
     selection: PyMOL selection to color. Default: ``"all"``.

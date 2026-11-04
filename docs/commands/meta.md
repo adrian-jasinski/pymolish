@@ -1,6 +1,6 @@
 # Meta
 
-_6 command(s). Generated from the command registry — do not edit by hand._
+_8 command(s). Generated from the command registry — do not edit by hand._
 
 ## Commands in this category
 
@@ -8,7 +8,9 @@ _6 command(s). Generated from the command registry — do not edit by hand._
 - [`pymolish_help`](#pymolish_help) — Print detailed help for a registered command
 - [`pymolish_install_deps`](#pymolish_install_deps) — Install optional dependencies into PyMOL's Python (pip or uv)
 - [`pymolish_list`](#pymolish_list) — List all registered commands, optionally filtered by category
+- [`pymolish_reload`](#pymolish_reload) — Reload pymolish in place (after installing a new plugin ZIP)
 - [`pymolish_search`](#pymolish_search) — Search commands by name, description, or tags
+- [`pymolish_upgrade`](#pymolish_upgrade) — Install the newest plugin ZIP from GitHub and offer to reload
 - [`pymolish_version`](#pymolish_version) — Show pymolish version and number of loaded commands
 
 ---
@@ -137,6 +139,45 @@ Returns:
 
 </details>
 
+### `pymolish_reload`
+
+Reload pymolish in place (after installing a new plugin ZIP)
+
+- **Usage:** `pymolish_reload`
+- **Since:** 0.1.23
+- **Tags:** `meta`, `upgrade`, `reload`
+
+**Examples:**
+
+```
+pymolish_reload
+```
+
+<details><summary>Full docstring</summary>
+
+```
+Reload pymolish in place and re-register every command.
+
+Drops all ``pymolish`` modules from ``sys.modules``, imports the package
+again from disk and runs its ``__init_plugin__``. Loaded objects and the
+PyMOL session are untouched. Use this after installing a new plugin ZIP
+without restarting PyMOL.
+
+Returns:
+    The version string of the freshly loaded package.
+
+Examples:
+    PyMOL> pymolish_reload
+
+Since:
+    0.1.23
+
+See Also:
+    pymolish_upgrade, pymolish_version
+```
+
+</details>
+
 ### `pymolish_search`
 
 Search commands by name, description, or tags
@@ -156,6 +197,55 @@ pymolish_search color
 
 ```
 Search registered commands by ``term`` across names, descriptions, tags.
+```
+
+</details>
+
+### `pymolish_upgrade`
+
+Install the newest plugin ZIP from GitHub and offer to reload
+
+- **Usage:** `pymolish_upgrade [check_only=False] [restart=None]`
+- **Since:** 0.1.23
+- **Tags:** `meta`, `upgrade`, `update`
+
+**Examples:**
+
+```
+pymolish_upgrade
+pymolish_upgrade check_only=1
+```
+
+<details><summary>Full docstring</summary>
+
+```
+Upgrade pymolish from the newest ZIP in the GitHub ``plugin/`` folder.
+
+Lists ``plugin/pymolish_<x>_<y>_<z>.zip`` files on GitHub, and when one is
+newer than the running version downloads it and replaces the installed
+package (only when pymolish was installed through PyMOL's Plugin Manager;
+pip/uv installs and symlinked dev checkouts are refused). Afterwards a
+yes/no dialog offers to reload the plugin in place; declining leaves the
+old code running until you run ``pymolish_reload`` or restart PyMOL.
+
+Args:
+    check_only: When truthy, only report whether a newer version exists.
+    restart: Skip the dialog: ``1`` reloads right away, ``0`` never does.
+        Also the fallback when no GUI dialog is available (``pymol -c``).
+
+Returns:
+    The newer version string when one was found, ``None`` otherwise.
+
+Examples:
+    PyMOL> pymolish_upgrade
+    PyMOL> pymolish_upgrade check_only=1
+    PyMOL> pymolish_upgrade restart=0
+
+Since:
+    0.1.23
+
+See Also:
+    pymolish_reload, pymolish_version
 ```
 
 </details>

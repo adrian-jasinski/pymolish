@@ -30,7 +30,9 @@ def _http(monkeypatch, routes):
 
 
 def _not_found():
-    return urllib.error.HTTPError("u", 404, "nf", {}, None)
+    err = urllib.error.HTTPError("u", 404, "nf", {}, None)
+    err.close()  # 3.14 warns at GC for unclosed HTTPErrors; -W error made it a flake
+    return err
 
 
 def test_detection():
@@ -55,12 +57,12 @@ def test_accession_loads_from_alphafold(pymol_cmd, monkeypatch):
         },
     )
     pymol_cmd.count_atoms.return_value = 1
-    pymol_cmd.get_object_list.return_value = ["AF_P04637"]
+    pymol_cmd.get_extent.return_value = [[0, 0, 0], [1, 1, 1]]
 
     assert fetch_fold("P04637") == "AF_P04637"
     pymol_cmd.read_pdbstr.assert_called_once_with(_PDB, "AF_P04637")
     assert pymol_cmd.color.call_count == 4
-    pymol_cmd.ramp_new.assert_called_once()
+    assert pymol_cmd.pseudoatom.call_count == 4
     assert calls[0][0].endswith("/P04637")
 
 
