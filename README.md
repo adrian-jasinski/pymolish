@@ -21,8 +21,8 @@ Jump to a part: [install](https://www.youtube.com/watch?v=q6c24OJZzd4&t=0s) · [
 
 ## Highlights
 
-- **49 commands** in six categories: I/O, groups, structure analysis, selection, visualization, and discovery/help
-- **Works out of the box** — no required third-party packages. NumPy and Biopython are optional and only needed by three commands
+- **51 commands** in six categories: I/O, groups, structure analysis, selection, visualization, and discovery/help
+- **Works out of the box** — no required third-party packages. NumPy, Biopython and RDKit are optional and only needed by five commands
 - **Tab completion** for group names, files, formats, and selections
 - **Built-in help** — `pymolish_list`, `pymolish_help <command>`, `pymolish_search <term>`
 - **GUI integration** — new entries in the group right-click **A**ction menu, plus keyboard shortcuts for stepping through a group (more GUI features are planned)
@@ -33,7 +33,7 @@ Most commands are run from the PyMOL command line. A few of the group commands a
 
 - **PyMOL Open Source 3.0 or newer**
 - **Python 3.10 or newer** — the interpreter PyMOL itself runs on
-- Optional, only for specific commands: `numpy` (ligand clustering) and `biopython` (sequence search). Everything else, including UniProt fetching and gradient colors, uses only the standard library
+- Optional, only for specific commands: `numpy` (ligand clustering), `biopython` (sequence search) and `rdkit` (loading molecules from SMILES). Everything else, including UniProt fetching and gradient colors, uses only the standard library
 
 If an optional package is missing, only the commands that need it are affected. They print what to install and leave the rest of the plugin working.
 
@@ -103,7 +103,7 @@ A longer walkthrough, including ligand clustering and UniProt fetching, is in th
 
 | Category | Commands | What it does |
 |----------|---------:|--------------|
-| [I/O](docs/commands/i_o.md) | 7 | Batch-load structure files; export groups to CIF, PDB, FASTA, or CSV |
+| [I/O](docs/commands/i_o.md) | 9 | Batch-load structure files; load molecules from SMILES (RDKit); export groups to CIF, PDB, FASTA, or CSV |
 | [Groups](docs/commands/groups.md) | 18 | Toggle, navigate, sort, copy, merge groups; extract chains |
 | [Structure](docs/commands/structure.md) | 9 | Multi-alignment, cleanup, ligand clustering, UniProt fetching |
 | [Selection](docs/commands/selection.md) | 3 | Sequence search; show/hide/select waters and ions |

@@ -61,7 +61,12 @@ def test_dry_run_does_not_install(monkeypatch, capsys):
     calls = []
     _setup(monkeypatch, calls)
     result = deps.pymolish_install_deps("all", dry_run="1")
-    assert result == ["numpy>=1.20", "matplotlib>=3.3", "biopython>=1.83"]
+    assert result == [
+        "numpy>=1.20",
+        "matplotlib>=3.3",
+        "biopython>=1.83",
+        "rdkit>=2023.9",
+    ]
     assert not any("install" in c for c in calls)
     assert "would run" in capsys.readouterr().out
 

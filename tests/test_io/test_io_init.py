@@ -24,6 +24,8 @@ def test_init_plugin_registers_all_io_commands(pymol_cmd):
         "export_objects",
         "export_by_pattern",
         "export_byres_to_csv",
+        "load_smiles",
+        "paste_smiles",
     ):
         info = registry.get(name)
         assert info is not None, f"{name} should be registered"
@@ -90,7 +92,7 @@ def test_plugin_loads_files_without_csv(missing_module):
         registry = importlib.import_module(
             plugin.__name__ + '.core.registry'
         ).CommandRegistry.instance()
-        assert len(registry.list_commands('I/O')) == 7
+        assert len(registry.list_commands('I/O')) == 9
 
         with TemporaryDirectory() as directory:
             structure = Path(directory) / 'model.pdb'

@@ -20,10 +20,11 @@ EXTRAS: dict[str, tuple[str, str]] = {
     "numpy": ("numpy", "numpy>=1.20"),
     "matplotlib": ("matplotlib", "matplotlib>=3.3"),
     "biopython": ("Bio", "biopython>=1.83"),
+    "rdkit": ("rdkit", "rdkit>=2023.9"),
     "gui": ("pymol.Qt", "PyQt5>=5.15"),
 }
 # ponytail: "gui" stays out of "all" — a second Qt binding can break PyMOL's GUI.
-_DEFAULT_EXTRAS = ("numpy", "matplotlib", "biopython")
+_DEFAULT_EXTRAS = ("numpy", "matplotlib", "biopython", "rdkit")
 
 
 def _is_installed(module: str) -> bool:
@@ -76,7 +77,7 @@ def pymolish_install_deps(
 
     Args:
         extras: Comma- or space-separated extras: ``numpy``, ``matplotlib``,
-            ``biopython``, ``gui``, or ``all`` (everything except ``gui``).
+            ``biopython``, ``rdkit``, ``gui``, or ``all`` (everything except ``gui``).
         dry_run: When truthy, only print the install command.
 
     Returns:

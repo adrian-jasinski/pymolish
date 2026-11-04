@@ -1,6 +1,6 @@
 # I/O
 
-_7 command(s). Generated from the command registry — do not edit by hand._
+_9 command(s). Generated from the command registry — do not edit by hand._
 
 ## Commands in this category
 
@@ -11,6 +11,8 @@ _7 command(s). Generated from the command registry — do not edit by hand._
 - [`list_loadable_files`](#list_loadable_files) — Preview files that would be loaded without loading them
 - [`load_files`](#load_files) — Load structure files from a directory with optional grouping
 - [`load_recursive`](#load_recursive) — Recursively load structure files from a directory tree
+- [`load_smiles`](#load_smiles) — Load a molecule from SMILES (or .smi file) with RDKit conformers
+- [`paste_smiles`](#paste_smiles) — Load the clipboard as a molecule if it is a SMILES (Ctrl+V)
 
 ---
 
@@ -350,6 +352,104 @@ Since:
 
 See Also:
     load_files, list_loadable_files
+```
+
+</details>
+
+### `load_smiles`
+
+Load a molecule from SMILES (or .smi file) with RDKit conformers
+
+- **Usage:** `load_smiles <smiles> [name=None] [n_conformers=10] [mode='objects'] [seed=42]`
+- **Since:** 0.1.24
+- **Tags:** `smiles`, `rdkit`, `conformers`, `load`, `ligand`
+- **See also:** `paste_smiles`, `pymolish_install_deps`
+
+**Examples:**
+
+```
+load_smiles CC(=O)Oc1ccccc1C(=O)O
+load_smiles CC(=O)Oc1ccccc1C(=O)O, aspirin, 5
+load_smiles c1ccccc1O, phenol, 20, states
+load_smiles ligands.smi, lig, 3
+```
+
+<details><summary>Full docstring</summary>
+
+```
+Load a molecule from a SMILES string (or ``.smi`` file) with 3D conformers.
+
+Conformers are generated with RDKit ETKDGv3, force-field minimized
+(MMFF94, UFF fallback) and loaded without touching the disk.
+
+Args:
+    smiles: SMILES string, or path to a ``.smi``/``.smiles``/``.txt`` file
+        with one ``SMILES [name]`` entry per line (``#`` lines ignored).
+    name: Object name. Defaults to an unused ``molNN`` name. For files the
+        per-line name wins; otherwise this is used as the prefix.
+    n_conformers: Maximum number of conformers (RMS pruning may yield fewer).
+    mode: ``objects`` loads ``name_1 .. name_n`` grouped under ``name``;
+        ``states`` loads all conformers as states of one object ``name``.
+    seed: Random seed for reproducible embedding.
+
+Returns:
+    Names of the objects created (empty on error).
+
+Examples:
+    PyMOL> load_smiles CC(=O)Oc1ccccc1C(=O)O
+    PyMOL> load_smiles CC(=O)Oc1ccccc1C(=O)O, aspirin, 5
+    PyMOL> load_smiles c1ccccc1O, phenol, 20, states
+    PyMOL> load_smiles ligands.smi, lig, 3
+
+Since:
+    0.1.24
+
+See Also:
+    paste_smiles, pymolish_install_deps
+```
+
+</details>
+
+### `paste_smiles`
+
+Load the clipboard as a molecule if it is a SMILES (Ctrl+V)
+
+- **Usage:** `paste_smiles [n_conformers=10] [mode='objects']`
+- **Since:** 0.1.24
+- **Tags:** `smiles`, `rdkit`, `clipboard`, `paste`, `keybinding`
+- **See also:** `load_smiles`, `pymolish_install_deps`
+
+**Examples:**
+
+```
+paste_smiles
+paste_smiles 3, states
+```
+
+<details><summary>Full docstring</summary>
+
+```
+Load the clipboard as a molecule if it is a valid SMILES.
+
+Bound to ``Ctrl+V`` while the 3D viewer has focus (the command line keeps
+its normal paste behaviour). Non-SMILES text is ignored with a message.
+
+Args:
+    n_conformers: Maximum number of conformers to generate.
+    mode: ``objects`` (default) or ``states``; see :func:`load_smiles`.
+
+Returns:
+    Names of the objects created (empty if nothing was loaded).
+
+Examples:
+    PyMOL> paste_smiles
+    PyMOL> paste_smiles 3, states
+
+Since:
+    0.1.24
+
+See Also:
+    load_smiles, pymolish_install_deps
 ```
 
 </details>

@@ -1,6 +1,6 @@
 [project]
 name = "pymolish"
-version = "0.1.23"
+version = "0.1.24"
 description = "PyMOLish — curated PyMOL Open Source command extension library"
 requires-python = ">=3.10"
 authors = [
@@ -24,6 +24,7 @@ dependencies = []
 numpy = ["numpy>=1.20"]
 matplotlib = ["matplotlib>=3.3"]
 biopython = ["biopython>=1.83"]
+rdkit = ["rdkit>=2023.9"]
 gui = ["PyQt5>=5.15"]
 dev = [
   "pytest>=8.0",
@@ -34,6 +35,7 @@ all = [
   "numpy>=1.20",
   "matplotlib>=3.3",
   "biopython>=1.83",
+  "rdkit>=2023.9",
   "PyQt5>=5.15",
 ]
 

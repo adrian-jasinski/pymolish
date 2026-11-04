@@ -46,13 +46,15 @@ def test_commands_remain_available_without_optional_dependencies():
         assert not attempts, attempts
         assert not output.getvalue(), output.getvalue()
         registry = CommandRegistry.instance()
-        assert len(registry) == 55, len(registry)
+        assert len(registry) == 57, len(registry)
         assert len(registry.categories()) == 6
 
         cases = [
             ('cluster_ligands_by_position', 'ligands', 'numpy', 'numpy', {}),
             ('cluster_ligands_from_group', 'ligands', 'numpy', 'numpy', {}),
             ('search_sequence', 'ACDEF', 'biopython', 'biopython', []),
+            ('load_smiles', 'CCO', 'rdkit', 'rdkit', []),
+            ('paste_smiles', 5, 'rdkit', 'rdkit', []),
         ]
         for name, argument, package, extra, empty in cases:
             cmd.reset_mock()

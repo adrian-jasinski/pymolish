@@ -15,7 +15,7 @@ src/pymolish/
     validators.py          # Common argument validators (dir, suffix, group, selection)
     group_utils.py         # GroupUtils — shared PyMOL group/object helpers
   extensions/              # Command modules, one sub-package per category
-    io/                    # File Loading & Export (load_files, export_group, export_byres)
+    io/                    # File Loading & Export (load_files, load_smiles, export_group, export_byres)
     groups/                # Group Operations (toggle, navigate, sort, copy, merge, extract_chain)
     structure/             # Structure Analysis (multialign, clean, cluster_ligands, fetch_uniprot)
     selection/             # Selection Helpers (sequence_search)
@@ -32,6 +32,7 @@ plans/                     # Structured plans (active/, research/, finalized/, t
 - **PyQt5** — Optional GUI panels (via pymol.Qt)
 - **Biopython** — Optional: UniProt fetching, sequence search
 - **NumPy** — Optional: ligand clustering, alignment stats
+- **RDKit** — Optional: SMILES parsing + conformer generation (load_smiles, Ctrl+V paste)
 - **Matplotlib** — Optional: gradient color generation
 - **Ruff** — Linting and formatting
 - **Hatchling** — Build backend

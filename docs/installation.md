@@ -59,6 +59,7 @@ Most commands need nothing beyond PyMOL. A few use extra Python packages:
 |---------|-----------|
 | `numpy` | `cluster_ligands_by_position`, `cluster_ligands_from_group` |
 | `biopython` | `search_sequence` |
+| `rdkit` | `load_smiles`, `paste_smiles` |
 
 Everything else — including the UniProt commands and gradient coloring — uses only Python's standard library.
 
@@ -72,7 +73,7 @@ Install with: pip install 'pymolish[numpy]' in PyMOL's Python environment.
 The easiest way to install them is from inside PyMOL, which guarantees they go into the right Python:
 
 ```pymol
-pymolish_install_deps                # numpy, matplotlib, biopython
+pymolish_install_deps                # numpy, matplotlib, biopython, rdkit
 pymolish_install_deps biopython      # just one
 pymolish_install_deps all, dry_run=1 # show what would run, install nothing
 ```
@@ -96,7 +97,7 @@ Then from a checkout:
 /path/to/pymol-python -m pip install -e ".[all]"     # with every optional extra
 ```
 
-Available extras: `numpy`, `biopython`, `matplotlib`, `gui`, `dev`, `all`.
+Available extras: `numpy`, `biopython`, `rdkit`, `matplotlib`, `gui`, `dev`, `all`.
 
 You still need to register the plugin with PyMOL once: Plugin Manager → Install New Plugin → **Install from Repository → Add…** and point it at the `src/pymolish/` directory, or copy/symlink `src/pymolish/` into PyMOL's startup directory (the path is shown under Plugin Manager → Settings).
 

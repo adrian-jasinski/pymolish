@@ -20,7 +20,7 @@ _8 command(s). Generated from the command registry — do not edit by hand._
 List categories with command counts
 
 - **Usage:** `pymolish_categories`
-- **Since:** 0.1.23
+- **Since:** 0.1.24
 - **Tags:** `meta`, `discovery`
 
 **Examples:**
@@ -42,7 +42,7 @@ Print each category with the number of commands it contains.
 Print detailed help for a registered command
 
 - **Usage:** `pymolish_help <name>`
-- **Since:** 0.1.23
+- **Since:** 0.1.24
 - **Tags:** `meta`, `help`
 
 **Examples:**
@@ -70,7 +70,7 @@ Returns:
 Install optional dependencies into PyMOL's Python (pip or uv)
 
 - **Usage:** `pymolish_install_deps [extras='all'] [dry_run=False]`
-- **Since:** 0.1.23
+- **Since:** 0.1.24
 - **Tags:** `meta`, `install`, `dependencies`
 
 **Examples:**
@@ -93,7 +93,7 @@ missing (e.g. uv-managed venvs), ``uv pip install --python <python>``.
 
 Args:
     extras: Comma- or space-separated extras: ``numpy``, ``matplotlib``,
-        ``biopython``, ``gui``, or ``all`` (everything except ``gui``).
+        ``biopython``, ``rdkit``, ``gui``, or ``all`` (everything except ``gui``).
     dry_run: When truthy, only print the install command.
 
 Returns:
@@ -118,7 +118,7 @@ See Also:
 List all registered commands, optionally filtered by category
 
 - **Usage:** `pymolish_list [category=None]`
-- **Since:** 0.1.23
+- **Since:** 0.1.24
 - **Tags:** `meta`, `discovery`
 
 **Examples:**
@@ -144,7 +144,7 @@ Returns:
 Reload pymolish in place (after installing a new plugin ZIP)
 
 - **Usage:** `pymolish_reload`
-- **Since:** 0.1.23
+- **Since:** 0.1.24
 - **Tags:** `meta`, `upgrade`, `reload`
 
 **Examples:**
@@ -183,7 +183,7 @@ See Also:
 Search commands by name, description, or tags
 
 - **Usage:** `pymolish_search <term>`
-- **Since:** 0.1.23
+- **Since:** 0.1.24
 - **Tags:** `meta`, `search`
 
 **Examples:**
@@ -206,7 +206,7 @@ Search registered commands by ``term`` across names, descriptions, tags.
 Install the newest plugin ZIP from GitHub and offer to reload
 
 - **Usage:** `pymolish_upgrade [check_only=False] [restart=None]`
-- **Since:** 0.1.23
+- **Since:** 0.1.24
 - **Tags:** `meta`, `upgrade`, `update`
 
 **Examples:**
@@ -255,7 +255,7 @@ See Also:
 Show pymolish version and number of loaded commands
 
 - **Usage:** `pymolish_version`
-- **Since:** 0.1.23
+- **Since:** 0.1.24
 - **Tags:** `meta`, `version`
 
 **Examples:**
