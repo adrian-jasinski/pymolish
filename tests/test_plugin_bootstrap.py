@@ -40,7 +40,7 @@ def test_pymolish_categories_counts(pymol_cmd):
     assert counts == {
         "Groups": 18,
         "I/O": 9,
-        "Meta": 8,
+        "Meta": 9,
         "Selection": 3,
         "Structure": 10,
         "Visualization": 9,
@@ -63,7 +63,7 @@ def test_animation_commands_are_removed(pymol_cmd, capsys):
     }
 
     names = pymolish.pymolish_list()
-    assert len(names) == 57
+    assert len(names) == 58
     assert removed.isdisjoint(names)
     assert "== Animation ==" not in capsys.readouterr().out
     assert registry.list_commands("Animation") == []
@@ -82,7 +82,7 @@ def test_animation_commands_are_removed(pymol_cmd, capsys):
         assert removed.isdisjoint(slot)
 
     pymolish.pymolish_version()
-    assert "(57 commands loaded)" in capsys.readouterr().out
+    assert "(58 commands loaded)" in capsys.readouterr().out
 
 
 def test_pymolish_list_self_heals_when_only_meta_registered(pymol_cmd, monkeypatch):
@@ -97,3 +97,18 @@ def test_pymolish_list_self_heals_when_only_meta_registered(pymol_cmd, monkeypat
     assert len(names) > 5
     assert set(registry.categories()) > {"Meta"}
     assert "load_files" in registry
+
+
+def test_pymolish_logo_toggles_wizard(pymol_cmd):
+    pymol_cmd.get_wizard.return_value = None
+    assert pymolish.pymolish_logo() is True
+    wizard = pymol_cmd.set_wizard.call_args[0][0]
+    assert pymolish.__version__ in wizard.get_prompt()[-1]
+
+    pymol_cmd.get_wizard.return_value = wizard
+    assert pymolish.pymolish_logo() is False
+    assert pymol_cmd.set_wizard.call_args == ((), {})
+
+    assert pymolish.pymolish_logo(0) is False  # idempotent hide
+    pymol_cmd.get_wizard.return_value = None
+    assert pymolish.pymolish_logo("on") is True

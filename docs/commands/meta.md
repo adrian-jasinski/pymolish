@@ -1,6 +1,6 @@
 # Meta
 
-_8 command(s). Generated from the command registry — do not edit by hand._
+_9 command(s). Generated from the command registry — do not edit by hand._
 
 ## Commands in this category
 
@@ -8,6 +8,7 @@ _8 command(s). Generated from the command registry — do not edit by hand._
 - [`pymolish_help`](#pymolish_help) — Print detailed help for a registered command
 - [`pymolish_install_deps`](#pymolish_install_deps) — Install optional dependencies into PyMOL's Python (pip or uv)
 - [`pymolish_list`](#pymolish_list) — List all registered commands, optionally filtered by category
+- [`pymolish_logo`](#pymolish_logo) — Show or hide the PyMOLish logo + version overlay in the viewer
 - [`pymolish_reload`](#pymolish_reload) — Reload pymolish in place (after installing a new plugin ZIP)
 - [`pymolish_search`](#pymolish_search) — Search commands by name, description, or tags
 - [`pymolish_upgrade`](#pymolish_upgrade) — Install the newest plugin ZIP from GitHub and offer to reload
@@ -20,7 +21,7 @@ _8 command(s). Generated from the command registry — do not edit by hand._
 List categories with command counts
 
 - **Usage:** `pymolish_categories`
-- **Since:** 0.1.24
+- **Since:** 0.1.25
 - **Tags:** `meta`, `discovery`
 
 **Examples:**
@@ -42,7 +43,7 @@ Print each category with the number of commands it contains.
 Print detailed help for a registered command
 
 - **Usage:** `pymolish_help <name>`
-- **Since:** 0.1.24
+- **Since:** 0.1.25
 - **Tags:** `meta`, `help`
 
 **Examples:**
@@ -70,7 +71,7 @@ Returns:
 Install optional dependencies into PyMOL's Python (pip or uv)
 
 - **Usage:** `pymolish_install_deps [extras='all'] [dry_run=False]`
-- **Since:** 0.1.24
+- **Since:** 0.1.25
 - **Tags:** `meta`, `install`, `dependencies`
 
 **Examples:**
@@ -118,7 +119,7 @@ See Also:
 List all registered commands, optionally filtered by category
 
 - **Usage:** `pymolish_list [category=None]`
-- **Since:** 0.1.24
+- **Since:** 0.1.25
 - **Tags:** `meta`, `discovery`
 
 **Examples:**
@@ -139,12 +140,56 @@ Returns:
 
 </details>
 
+### `pymolish_logo`
+
+Show or hide the PyMOLish logo + version overlay in the viewer
+
+- **Usage:** `pymolish_logo [show='toggle']`
+- **Since:** 0.1.25
+- **Tags:** `meta`, `logo`, `overlay`
+
+**Examples:**
+
+```
+pymolish_logo
+pymolish_logo 0
+pymolish_logo toggle
+```
+
+<details><summary>Full docstring</summary>
+
+```
+Show or hide a PyMOLish logo + version overlay in the viewer.
+
+The overlay is drawn via PyMOL's wizard prompt (top-left of the 3D view),
+so it stays fixed on screen while the scene rotates.
+
+Args:
+    show: ``1``/``on`` to show, ``0``/``off`` to hide, ``toggle`` (default)
+        to flip the current state.
+
+Returns:
+    ``True`` if the overlay is visible after the call, ``False`` otherwise.
+
+Examples:
+    pymolish_logo
+    pymolish_logo 0
+
+Since:
+    0.1.25
+
+See Also:
+    pymolish_version
+```
+
+</details>
+
 ### `pymolish_reload`
 
 Reload pymolish in place (after installing a new plugin ZIP)
 
 - **Usage:** `pymolish_reload`
-- **Since:** 0.1.24
+- **Since:** 0.1.25
 - **Tags:** `meta`, `upgrade`, `reload`
 
 **Examples:**
@@ -183,7 +228,7 @@ See Also:
 Search commands by name, description, or tags
 
 - **Usage:** `pymolish_search <term>`
-- **Since:** 0.1.24
+- **Since:** 0.1.25
 - **Tags:** `meta`, `search`
 
 **Examples:**
@@ -206,7 +251,7 @@ Search registered commands by ``term`` across names, descriptions, tags.
 Install the newest plugin ZIP from GitHub and offer to reload
 
 - **Usage:** `pymolish_upgrade [check_only=False] [restart=None]`
-- **Since:** 0.1.24
+- **Since:** 0.1.25
 - **Tags:** `meta`, `upgrade`, `update`
 
 **Examples:**
@@ -255,7 +300,7 @@ See Also:
 Show pymolish version and number of loaded commands
 
 - **Usage:** `pymolish_version`
-- **Since:** 0.1.24
+- **Since:** 0.1.25
 - **Tags:** `meta`, `version`
 
 **Examples:**

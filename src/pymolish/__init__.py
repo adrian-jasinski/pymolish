@@ -167,6 +167,13 @@ def _register_meta_commands() -> None:
             ["meta", "version"],
         ),
         (
+            "pymolish_logo",
+            pymolish_logo,
+            "Show or hide the PyMOLish logo + version overlay in the viewer",
+            ["pymolish_logo", "pymolish_logo 0", "pymolish_logo toggle"],
+            ["meta", "logo", "overlay"],
+        ),
+        (
             "pymolish_install_deps",
             pymolish_install_deps,
             "Install optional dependencies into PyMOL's Python (pip or uv)",
@@ -318,6 +325,73 @@ def pymolish_version() -> str:
     return __version__
 
 
+_LOGO_LINES = (
+    "  ___      __  __  ___  _    _    _  ",
+    " | _ \\_  _|  \\/  |/ _ \\| |  (_)__| |_ ",
+    " |  _/ || | |\\/| | (_) | |__| (_-< ' \\",
+    " |_|  \\_, |_|  |_|\\___/|____|_/__/_||_|",
+    "       |__/",
+)
+
+
+def pymolish_logo(show: str | int = "toggle") -> bool:
+    """Show or hide a PyMOLish logo + version overlay in the viewer.
+
+    The overlay is drawn via PyMOL's wizard prompt (top-left of the 3D view),
+    so it stays fixed on screen while the scene rotates.
+
+    Args:
+        show: ``1``/``on`` to show, ``0``/``off`` to hide, ``toggle`` (default)
+            to flip the current state.
+
+    Returns:
+        ``True`` if the overlay is visible after the call, ``False`` otherwise.
+
+    Examples:
+        pymolish_logo
+        pymolish_logo 0
+
+    Since:
+        0.1.25
+
+    See Also:
+        pymolish_version
+    """
+    from pymol import cmd
+
+    from .core.logging import plog
+
+    # ponytail: uses the wizard prompt slot; any other wizard replaces it.
+    try:
+        from pymol.wizard import Wizard
+    except ImportError:  # tests / headless mock
+        Wizard = object  # noqa: N806
+
+    class _LogoWizard(Wizard):  # type: ignore[misc,valid-type]
+        def get_prompt(self):
+            return [*_LOGO_LINES, f" pymolish v{__version__}"]
+
+        def get_panel(self):
+            return None
+
+    visible = type(cmd.get_wizard()).__name__ == "_LogoWizard"
+    want = (
+        not visible
+        if str(show).lower() in ("toggle", "")
+        else str(show).lower() in ("1", "on", "true", "yes")
+    )
+    if want == visible:
+        return visible
+    if want:
+        cmd.set_wizard(_LogoWizard(cmd) if Wizard is not object else _LogoWizard())
+        cmd.refresh_wizard()
+        plog("logo", f"overlay shown (pymolish v{__version__})")
+    else:
+        cmd.set_wizard()
+        plog("logo", "overlay hidden")
+    return want
+
+
 def _suffix_for_category(category: str | None) -> str:
     return f" in category {category!r}" if category else ""
 
@@ -328,6 +402,7 @@ __all__ = [
     "pymolish_categories",
     "pymolish_help",
     "pymolish_list",
+    "pymolish_logo",
     "pymolish_search",
     "pymolish_version",
 ]
