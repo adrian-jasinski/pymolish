@@ -26,14 +26,6 @@ Cluster ligands by 3-D centroid into new PyMOL groups (requires numpy)
 - **Tags:** `clustering`, `ligands`, `spatial`, `numpy`, `groups`
 - **See also:** `cluster_ligands_from_group`
 
-**Examples:**
-
-```
-cluster_ligands_by_position ligands, 3
-cluster_ligands_by_position hetero, 4, hierarchical, 15.0
-cluster_ligands_by_position drug_group, 2, distance, 10.0, my_clusters
-```
-
 <details><summary>Full docstring</summary>
 
 ```
@@ -83,14 +75,6 @@ Cluster ligands from a named PyMOL group (requires numpy)
 - **Tags:** `clustering`, `ligands`, `groups`, `numpy`
 - **See also:** `cluster_ligands_by_position`
 
-**Examples:**
-
-```
-cluster_ligands_from_group my_ligands, 2
-cluster_ligands_from_group compounds, 5, hierarchical
-cluster_ligands_from_group drug_group, 3, distance, 12.0
-```
-
 <details><summary>Full docstring</summary>
 
 ```
@@ -132,16 +116,6 @@ Fetch PDB structures for a UniProt accession via RCSB/UniProt APIs (biopython op
 - **Since:** 1.0.0
 - **Tags:** `fetch`, `uniprot`, `pdb`, `network`
 - **See also:** `list_uniprot_structures`
-
-**Examples:**
-
-```
-fetch_by_uniprot P04637
-fetch_by_uniprot P38398, 5
-fetch_by_uniprot Q9Y6R4, 3, 0
-fetch_by_uniprot P04637, 0, 1, p53
-fetch_by_uniprot P04637, group=0
-```
 
 <details><summary>Full docstring</summary>
 
@@ -191,15 +165,6 @@ Fetch an AlphaFold DB (UniProt accession) or ESMFold (sequence) model and color 
 - **Since:** 1.0.0
 - **Tags:** `fetch`, `alphafold`, `esmfold`, `plddt`, `prediction`, `network`
 - **See also:** `color_plddt`, `fetch_by_uniprot`
-
-**Examples:**
-
-```
-fetch_fold P04637
-fetch_fold MKTAYIAKQRQISFVKSHFSRQLEERLGLIEVQ
-fetch_fold P04637, p53_model, color=0
-fetch_fold P04637, source=esmfold
-```
 
 <details><summary>Full docstring</summary>
 
@@ -252,16 +217,6 @@ Load all distinct ligands (small molecules) from a UniProt accession's PDB entri
 - **Tags:** `fetch`, `uniprot`, `ligands`, `network`
 - **See also:** `fetch_by_uniprot`, `list_uniprot_structures`
 
-**Examples:**
-
-```
-fetch_uniprot_ligands P00918
-fetch_uniprot_ligands P00918, 150
-fetch_uniprot_ligands P00918, 100, 20, 0
-fetch_uniprot_ligands P00918, 100, 0, 1, CA2_ligs
-fetch_uniprot_ligands P00918, group=0
-```
-
 <details><summary>Full docstring</summary>
 
 ```
@@ -313,14 +268,6 @@ List PyMOL objects whose names start with a given prefix
 - **Tags:** `list`, `objects`, `prefix`, `utility`
 - **See also:** `multialign`
 
-**Examples:**
-
-```
-list_objects_with_prefix protein_
-list_objects_with_prefix chain_A
-list_objects_with_prefix
-```
-
 <details><summary>Full docstring</summary>
 
 ```
@@ -354,14 +301,6 @@ List PDB structures for a UniProt accession without loading them (biopython opti
 - **Since:** 1.0.0
 - **Tags:** `list`, `uniprot`, `pdb`, `network`
 - **See also:** `fetch_by_uniprot`
-
-**Examples:**
-
-```
-list_uniprot_structures P04637
-list_uniprot_structures P38398, 1
-list_uniprot_structures Q9Y6R4, 0
-```
 
 <details><summary>Full docstring</summary>
 
@@ -404,15 +343,6 @@ Align multiple structures to a reference and report RMSD statistics
 - **Since:** 1.0.0
 - **Tags:** `alignment`, `rmsd`, `structure`, `multi`
 - **See also:** `list_objects_with_prefix`
-
-**Examples:**
-
-```
-multialign my_structures, reference_protein
-multialign protein_*, template_1
-multialign Estrogen, 1A52
-multialign Estrogen, 1A52, 0
-```
 
 <details><summary>Full docstring</summary>
 
@@ -457,14 +387,6 @@ Remove common small ions from a PyMOL selection
 - **Tags:** `cleanup`, `ions`, `remove`, `structure`
 - **See also:** `remove_metals`
 
-**Examples:**
-
-```
-remove_ions
-remove_ions protein_complex
-remove_ions chain A
-```
-
 <details><summary>Full docstring</summary>
 
 ```
@@ -503,14 +425,6 @@ Remove common metal atoms from a PyMOL selection
 - **Since:** 1.0.0
 - **Tags:** `cleanup`, `metals`, `remove`, `structure`
 - **See also:** `remove_ions`
-
-**Examples:**
-
-```
-remove_metals
-remove_metals my_protein
-remove_metals chain B
-```
 
 <details><summary>Full docstring</summary>
 

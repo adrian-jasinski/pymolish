@@ -19,14 +19,6 @@ Select common ions (NA, CL, MG, ...), or 'on'/'off' to show/hide them
 - **Tags:** `selection`, `solvent`, `ions`
 - **See also:** `water`
 
-**Examples:**
-
-```
-ions
-ions on
-ions off
-```
-
 <details><summary>Full docstring</summary>
 
 ```
@@ -64,14 +56,6 @@ Search for amino acid sequences in loaded structures using alignment
 - **Since:** 1.0.0
 - **Tags:** `sequence`, `alignment`, `search`, `biopython`
 - **See also:** `pymolish_list`, `pymolish_search`
-
-**Examples:**
-
-```
-search_sequence MVLSPADKTNVKAA
-search_sequence ACDEFGH, mysel, 0.7
-search_sequence PEPTIDE, hit, 0.9
-```
 
 <details><summary>Full docstring</summary>
 
@@ -117,14 +101,6 @@ Select water (solvent), or 'on'/'off' to show/hide it
 - **Since:** 0.1.12
 - **Tags:** `selection`, `solvent`, `water`
 - **See also:** `ions`
-
-**Examples:**
-
-```
-water
-water on
-water off
-```
 
 <details><summary>Full docstring</summary>
 

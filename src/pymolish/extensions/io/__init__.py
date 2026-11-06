@@ -77,9 +77,9 @@ def __init_plugin__(app: object | None = None) -> None:
         category=CATEGORY,
         description="Load SMILES or text/CSV files with conformers and grouping",
         examples=[
-            "load_smiles CC(=O)Oc1ccccc1C(=O)O",
-            "load_smiles CC(=O)Oc1ccccc1C(=O)O, aspirin, 5",
-            "load_smiles c1ccccc1O, phenol, 20, states",
+            'load_smiles "CC(=O)Oc1ccccc1C(=O)O"',
+            'load_smiles "CC(=O)Oc1ccccc1C(=O)O", aspirin, 5',
+            'load_smiles "c1ccccc1O", phenol, 20, states',
             "load_smiles ligands.smi, lig, 3",
             "load_smiles ligands.csv, group_name=ligands, name_column=3",
             "load_smiles ligands.txt, name=lig, name_column=0",

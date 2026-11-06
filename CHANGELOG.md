@@ -3,6 +3,11 @@
 All notable changes to PyMOLish are documented here. Entries are grouped by
 the version in `pyproject.toml`; the newest version is at the top.
 
+## 0.1.27 — 2026-11-06
+
+- Command reference pages now show each command's examples once (from the docstring) instead of twice.
+- `load_smiles` examples now quote the SMILES argument, e.g. `load_smiles "CC(=O)Oc1ccccc1C(=O)O"`.
+
 ## 0.1.26 — 2026-11-06
 
 - Extended `load_smiles` file input with comma/semicolon CSV support, optional headers, UTF-8 BOM handling, and clear file-read errors.

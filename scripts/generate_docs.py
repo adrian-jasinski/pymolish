@@ -73,14 +73,7 @@ def _render_command(info) -> str:  # noqa: ANN001 — CommandInfo kept local
         lines.append(f"- **Tags:** {_format_list(info.tags)}")
     if info.see_also:
         lines.append(f"- **See also:** {_format_list(info.see_also)}")
-    if info.examples:
-        lines.append("")
-        lines.append("**Examples:**")
-        lines.append("")
-        lines.append("```")
-        for example in info.examples:
-            lines.append(example)
-        lines.append("```")
+    # Examples come from the docstring below; the registry list would duplicate them.
 
     doc = _dedent_docstring(info.function.__doc__)
     if doc:

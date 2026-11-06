@@ -24,12 +24,6 @@ List categories with command counts
 - **Since:** 0.1.25
 - **Tags:** `meta`, `discovery`
 
-**Examples:**
-
-```
-pymolish_categories
-```
-
 <details><summary>Full docstring</summary>
 
 ```
@@ -45,12 +39,6 @@ Print detailed help for a registered command
 - **Usage:** `pymolish_help <name>`
 - **Since:** 0.1.25
 - **Tags:** `meta`, `help`
-
-**Examples:**
-
-```
-pymolish_help load_files
-```
 
 <details><summary>Full docstring</summary>
 
@@ -73,14 +61,6 @@ Install optional dependencies into PyMOL's Python (pip or uv)
 - **Usage:** `pymolish_install_deps [extras='all'] [dry_run=False]`
 - **Since:** 0.1.25
 - **Tags:** `meta`, `install`, `dependencies`
-
-**Examples:**
-
-```
-pymolish_install_deps
-pymolish_install_deps biopython
-pymolish_install_deps numpy matplotlib, dry_run=1
-```
 
 <details><summary>Full docstring</summary>
 
@@ -122,13 +102,6 @@ List all registered commands, optionally filtered by category
 - **Since:** 0.1.25
 - **Tags:** `meta`, `discovery`
 
-**Examples:**
-
-```
-pymolish_list
-pymolish_list I/O
-```
-
 <details><summary>Full docstring</summary>
 
 ```
@@ -147,14 +120,6 @@ Show or hide the PyMOLish logo + version overlay in the viewer
 - **Usage:** `pymolish_logo [show='toggle']`
 - **Since:** 0.1.25
 - **Tags:** `meta`, `logo`, `overlay`
-
-**Examples:**
-
-```
-pymolish_logo
-pymolish_logo 0
-pymolish_logo toggle
-```
 
 <details><summary>Full docstring</summary>
 
@@ -192,12 +157,6 @@ Reload pymolish in place (after installing a new plugin ZIP)
 - **Since:** 0.1.25
 - **Tags:** `meta`, `upgrade`, `reload`
 
-**Examples:**
-
-```
-pymolish_reload
-```
-
 <details><summary>Full docstring</summary>
 
 ```
@@ -231,13 +190,6 @@ Search commands by name, description, or tags
 - **Since:** 0.1.25
 - **Tags:** `meta`, `search`
 
-**Examples:**
-
-```
-pymolish_search export
-pymolish_search color
-```
-
 <details><summary>Full docstring</summary>
 
 ```
@@ -253,13 +205,6 @@ Install the newest plugin ZIP from GitHub and offer to reload
 - **Usage:** `pymolish_upgrade [check_only=False] [restart=None]`
 - **Since:** 0.1.25
 - **Tags:** `meta`, `upgrade`, `update`
-
-**Examples:**
-
-```
-pymolish_upgrade
-pymolish_upgrade check_only=1
-```
 
 <details><summary>Full docstring</summary>
 
@@ -302,12 +247,6 @@ Show pymolish version and number of loaded commands
 - **Usage:** `pymolish_version`
 - **Since:** 0.1.25
 - **Tags:** `meta`, `version`
-
-**Examples:**
-
-```
-pymolish_version
-```
 
 <details><summary>Full docstring</summary>
 

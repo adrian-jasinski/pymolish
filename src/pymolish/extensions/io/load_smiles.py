@@ -204,9 +204,9 @@ def load_smiles(
         input errors or files with no molecules return an empty list.
 
     Examples:
-        PyMOL> load_smiles CC(=O)Oc1ccccc1C(=O)O
-        PyMOL> load_smiles CC(=O)Oc1ccccc1C(=O)O, aspirin, 5
-        PyMOL> load_smiles c1ccccc1O, phenol, 20, states
+        PyMOL> load_smiles "CC(=O)Oc1ccccc1C(=O)O"
+        PyMOL> load_smiles "CC(=O)Oc1ccccc1C(=O)O", aspirin, 5
+        PyMOL> load_smiles "c1ccccc1O", phenol, 20, states
         PyMOL> load_smiles ligands.smi, lig, 3
         PyMOL> load_smiles ligands.csv, group_name=ligands, name_column=3
         PyMOL> load_smiles ligands.txt, name=lig, name_column=0

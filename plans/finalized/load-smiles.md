@@ -51,7 +51,7 @@ No temp files.
 ## Expected output
 
 ```
-PyMOL> load_smiles CC(=O)Oc1ccccc1C(=O)O, aspirin, 5
+PyMOL> load_smiles "CC(=O)Oc1ccccc1C(=O)O", aspirin, 5
 [pymolish] io.smiles: aspirin: 5 conformer(s) as objects
 PyMOL> load_smiles c1ccccc1, mode=states
 [pymolish] io.smiles: mol01: 10 conformer(s) as states

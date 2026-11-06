@@ -25,14 +25,6 @@ Color objects in a group with a gradient derived from a single base color
 - **Tags:** `color`, `gradient`, `group`, `visualization`
 - **See also:** `color_group_with_palette`, `register_extended_colors`
 
-**Examples:**
-
-```
-color_group_with_gradient my_group, blue
-color_group_with_gradient proteins, red, 10, lightness
-color_group_with_gradient chains, green, , saturation
-```
-
 <details><summary>Full docstring</summary>
 
 ```
@@ -78,14 +70,6 @@ Color objects in a group or selection with an extended palette
 - **Tags:** `color`, `palette`, `group`, `visualization`
 - **See also:** `color_group_with_gradient`, `register_extended_colors`, `list_available_palettes`
 
-**Examples:**
-
-```
-color_group_with_palette my_group, pastels
-color_group_with_palette proteins, neon, 1, 1
-color_group_with_palette structures, earth, 0, 0, 5
-```
-
 <details><summary>Full docstring</summary>
 
 ```
@@ -130,14 +114,6 @@ Color a predicted model by pLDDT confidence (B-factor) and draw a legend
 - **Since:** 1.0.0
 - **Tags:** `color`, `plddt`, `alphafold`, `esmfold`, `confidence`
 - **See also:** `fetch_fold`, `color_secondary_structure`
-
-**Examples:**
-
-```
-color_plddt
-color_plddt AF_P04637, palette=gradient
-color_plddt my_model, 0
-```
 
 <details><summary>Full docstring</summary>
 
@@ -186,14 +162,6 @@ Color secondary structure elements using a predefined palette
 - **Tags:** `color`, `secondary structure`, `cartoon`, `visualization`
 - **See also:** `list_cartoon_palettes`, `color_group_with_palette`
 
-**Examples:**
-
-```
-color_secondary_structure protein
-color_secondary_structure my_structure, ard_green
-color_secondary_structure complex, ocean_depths, 0
-```
-
 <details><summary>Full docstring</summary>
 
 ```
@@ -236,12 +204,6 @@ List all available color palettes with descriptions
 - **Tags:** `color`, `palette`, `list`
 - **See also:** `register_extended_colors`, `color_group_with_palette`
 
-**Examples:**
-
-```
-list_available_palettes
-```
-
 <details><summary>Full docstring</summary>
 
 ```
@@ -271,12 +233,6 @@ List all available secondary-structure color palettes
 - **Tags:** `color`, `secondary structure`, `cartoon`, `list`
 - **See also:** `color_secondary_structure`
 
-**Examples:**
-
-```
-list_cartoon_palettes
-```
-
 <details><summary>Full docstring</summary>
 
 ```
@@ -305,14 +261,6 @@ Register extended color palettes with PyMOL's color system
 - **Since:** 1.0.0
 - **Tags:** `color`, `palette`, `register`
 - **See also:** `list_available_palettes`, `color_group_with_palette`
-
-**Examples:**
-
-```
-register_extended_colors
-register_extended_colors pastels
-register_extended_colors neon, 0
-```
 
 <details><summary>Full docstring</summary>
 
@@ -352,14 +300,6 @@ Enlarge PyMOL's Qt interface fonts and object panel for recording or presenting
 - **Since:** 1.0.0
 - **Tags:** `gui`, `font`, `scale`, `video`, `accessibility`
 - **See also:** `ui_scale_reset`
-
-**Examples:**
-
-```
-ui_scale
-ui_scale 16
-ui_scale 14, 2, 22, 250
-```
 
 <details><summary>Full docstring</summary>
 
@@ -405,12 +345,6 @@ Restore the interface sizes from before the first ui_scale call
 - **Since:** 1.0.0
 - **Tags:** `gui`, `font`, `scale`, `reset`
 - **See also:** `ui_scale`
-
-**Examples:**
-
-```
-ui_scale_reset
-```
 
 <details><summary>Full docstring</summary>
 

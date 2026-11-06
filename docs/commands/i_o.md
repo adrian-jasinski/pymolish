@@ -25,13 +25,6 @@ Export objects whose names match a wildcard pattern
 - **Tags:** `export`, `pattern`, `save`
 - **See also:** `export_group`, `export_objects`
 
-**Examples:**
-
-```
-export_by_pattern protein_*
-export_by_pattern chain_*, ./out, pdb
-```
-
 <details><summary>Full docstring</summary>
 
 ```
@@ -67,14 +60,6 @@ Write residues of a selection (chain, resname, resid) to CSV
 - **Since:** 1.0.0
 - **Tags:** `export`, `residues`, `csv`
 - **See also:** `export_group`
-
-**Examples:**
-
-```
-export_byres_to_csv protein, residues.csv
-export_byres_to_csv chain A, chain_a.csv
-export_byres_to_csv resi 1-50, residues_1_50.csv
-```
 
 <details><summary>Full docstring</summary>
 
@@ -118,15 +103,6 @@ Export all objects in a group as CIF/PDB/FASTA files
 - **Tags:** `export`, `group`, `save`
 - **See also:** `export_objects`, `export_by_pattern`, `export_byres_to_csv`
 
-**Examples:**
-
-```
-export_group my_structures
-export_group proteins, ., pdb
-export_group sequences, ., fasta
-export_group models, ./out, cif, 1
-```
-
 <details><summary>Full docstring</summary>
 
 ```
@@ -165,13 +141,6 @@ Export explicit PyMOL objects as CIF/PDB/FASTA files
 - **Tags:** `export`, `objects`, `save`
 - **See also:** `export_group`, `export_by_pattern`
 
-**Examples:**
-
-```
-export_objects obj1,obj2,obj3
-export_objects obj1,obj2, ./out, pdb
-```
-
 <details><summary>Full docstring</summary>
 
 ```
@@ -207,15 +176,6 @@ Preview files that would be loaded without loading them
 - **Since:** 1.0.0
 - **Tags:** `preview`, `list`, `directory`
 - **See also:** `load_files`, `load_recursive`
-
-**Examples:**
-
-```
-list_loadable_files
-list_loadable_files /tmp, sdf, 1
-list_loadable_files ., cif, 0, model_*
-list_loadable_files ., pdb, 1, , traj
-```
 
 <details><summary>Full docstring</summary>
 
@@ -255,17 +215,6 @@ Load structure files from a directory with optional grouping
 - **Since:** 1.0.0
 - **Tags:** `batch`, `load`, `directory`, `files`
 - **See also:** `load_recursive`, `list_loadable_files`, `export_group`
-
-**Examples:**
-
-```
-load_files
-load_files /tmp, sdf
-load_files ., pdb, my_proteins
-load_files ., pdb, proteins, loaded_
-load_files ., cif, , , model_*
-load_files ., pdb, , , , 1, traj
-```
 
 <details><summary>Full docstring</summary>
 
@@ -314,15 +263,6 @@ Recursively load structure files from a directory tree
 - **Tags:** `batch`, `load`, `recursive`
 - **See also:** `load_files`, `list_loadable_files`
 
-**Examples:**
-
-```
-load_recursive
-load_recursive /data, sdf, ligands
-load_recursive ., cif, , , model_*
-load_recursive ., pdb, , , , 2
-```
-
 <details><summary>Full docstring</summary>
 
 ```
@@ -365,17 +305,6 @@ Load SMILES or text/CSV files with conformers and grouping
 - **Tags:** `smiles`, `rdkit`, `conformers`, `load`, `ligand`, `files`, `csv`, `group`
 - **See also:** `paste_smiles`, `pymolish_install_deps`
 
-**Examples:**
-
-```
-load_smiles CC(=O)Oc1ccccc1C(=O)O
-load_smiles CC(=O)Oc1ccccc1C(=O)O, aspirin, 5
-load_smiles c1ccccc1O, phenol, 20, states
-load_smiles ligands.smi, lig, 3
-load_smiles ligands.csv, group_name=ligands, name_column=3
-load_smiles ligands.txt, name=lig, name_column=0
-```
-
 <details><summary>Full docstring</summary>
 
 ```
@@ -410,9 +339,9 @@ Returns:
     input errors or files with no molecules return an empty list.
 
 Examples:
-    PyMOL> load_smiles CC(=O)Oc1ccccc1C(=O)O
-    PyMOL> load_smiles CC(=O)Oc1ccccc1C(=O)O, aspirin, 5
-    PyMOL> load_smiles c1ccccc1O, phenol, 20, states
+    PyMOL> load_smiles "CC(=O)Oc1ccccc1C(=O)O"
+    PyMOL> load_smiles "CC(=O)Oc1ccccc1C(=O)O", aspirin, 5
+    PyMOL> load_smiles "c1ccccc1O", phenol, 20, states
     PyMOL> load_smiles ligands.smi, lig, 3
     PyMOL> load_smiles ligands.csv, group_name=ligands, name_column=3
     PyMOL> load_smiles ligands.txt, name=lig, name_column=0
@@ -434,13 +363,6 @@ Load the clipboard as a molecule if it is a SMILES (Ctrl+V)
 - **Since:** 0.1.24
 - **Tags:** `smiles`, `rdkit`, `clipboard`, `paste`, `keybinding`
 - **See also:** `load_smiles`, `pymolish_install_deps`
-
-**Examples:**
-
-```
-paste_smiles
-paste_smiles 3, states
-```
 
 <details><summary>Full docstring</summary>
 

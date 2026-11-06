@@ -1,6 +1,6 @@
 [project]
 name = "pymolish"
-version = "0.1.26"
+version = "0.1.27"
 description = "PyMOLish — curated PyMOL Open Source command extension library"
 requires-python = ">=3.10"
 authors = [

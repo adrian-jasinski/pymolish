@@ -34,14 +34,6 @@ Copy a group with renamed member objects
 - **Tags:** `group`, `copy`, `duplicate`
 - **See also:** `copy_group_objects`, `list_group_copies`
 
-**Examples:**
-
-```
-copy_group my_structures
-copy_group proteins, proteins_backup
-copy_group data, data_copy, _backup
-```
-
 <details><summary>Full docstring</summary>
 
 ```
@@ -80,13 +72,6 @@ Copy explicitly listed objects into a new group with renamed members
 - **Tags:** `group`, `copy`, `objects`
 - **See also:** `copy_group`, `list_group_copies`
 
-**Examples:**
-
-```
-copy_group_objects obj1,obj2,obj3, my_backup
-copy_group_objects protein1,protein2, backup_group, _backup
-```
-
 <details><summary>Full docstring</summary>
 
 ```
@@ -122,13 +107,6 @@ Create a new group whose members are sorted alphabetically
 - **Since:** 1.0.0
 - **Tags:** `group`, `sort`, `create`
 - **See also:** `sort_group`, `group_info`
-
-**Examples:**
-
-```
-create_sorted_group my_group
-create_sorted_group proteins, proteins_sorted
-```
 
 <details><summary>Full docstring</summary>
 
@@ -167,14 +145,6 @@ Extract a single chain from every object in a group or pattern
 - **Since:** 1.0.0
 - **Tags:** `group`, `chain`, `extract`
 - **See also:** `extract_chains_from_group`
-
-**Examples:**
-
-```
-extract_chain_from_group my_group, A
-extract_chain_from_group protein_*, B, my_prefix
-extract_chain_from_group complex, C, chains, 0
-```
 
 <details><summary>Full docstring</summary>
 
@@ -219,14 +189,6 @@ Extract multiple chains from every object in a group or pattern
 - **Tags:** `group`, `chain`, `extract`, `batch`
 - **See also:** `extract_chain_from_group`
 
-**Examples:**
-
-```
-extract_chains_from_group my_group, A,B
-extract_chains_from_group proteins, A,B,C
-extract_chains_from_group complex, A,B, my_prefix, 0
-```
-
 <details><summary>Full docstring</summary>
 
 ```
@@ -267,14 +229,6 @@ Disable objects in a group or matching a pattern
 - **Tags:** `group`, `disable`, `visibility`
 - **See also:** `group_enable`, `group_toggle`, `group_status`
 
-**Examples:**
-
-```
-group_disable my_group
-group_disable my_group, 2
-group_disable chain_*
-```
-
 <details><summary>Full docstring</summary>
 
 ```
@@ -309,14 +263,6 @@ Enable objects in a group or matching a pattern
 - **Since:** 1.0.0
 - **Tags:** `group`, `enable`, `visibility`
 - **See also:** `group_disable`, `group_toggle`, `group_status`
-
-**Examples:**
-
-```
-group_enable my_group
-group_enable my_group, 2
-group_enable chain_*
-```
 
 <details><summary>Full docstring</summary>
 
@@ -353,13 +299,6 @@ Display metadata and sorting status for a group
 - **Tags:** `group`, `info`, `inspect`
 - **See also:** `sort_group`, `create_sorted_group`
 
-**Examples:**
-
-```
-group_info my_proteins
-group_info structures_group
-```
-
 <details><summary>Full docstring</summary>
 
 ```
@@ -393,13 +332,6 @@ Show the next object in a group (one at a time)
 - **Since:** 1.0.0
 - **Tags:** `group`, `navigate`, `next`
 - **See also:** `group_previous`, `group_enable`, `group_disable`
-
-**Examples:**
-
-```
-group_next
-group_next my_group
-```
 
 <details><summary>Full docstring</summary>
 
@@ -440,13 +372,6 @@ Show the previous object in a group (one at a time)
 - **Tags:** `group`, `navigate`, `previous`
 - **See also:** `group_next`, `group_enable`, `group_disable`
 
-**Examples:**
-
-```
-group_previous
-group_previous my_group
-```
-
 <details><summary>Full docstring</summary>
 
 ```
@@ -485,13 +410,6 @@ Report enabled/disabled state of objects in a group or pattern
 - **Tags:** `group`, `status`, `visibility`
 - **See also:** `group_enable`, `group_disable`, `group_toggle`
 
-**Examples:**
-
-```
-group_status my_group
-group_status chain_*
-```
-
 <details><summary>Full docstring</summary>
 
 ```
@@ -525,13 +443,6 @@ Toggle visibility of objects in a group or matching a pattern
 - **Since:** 1.0.0
 - **Tags:** `group`, `toggle`, `visibility`
 - **See also:** `group_enable`, `group_disable`, `group_status`
-
-**Examples:**
-
-```
-group_toggle my_group
-group_toggle my_group, 2
-```
 
 <details><summary>Full docstring</summary>
 
@@ -570,12 +481,6 @@ Find all copies of objects belonging to a group
 - **Tags:** `group`, `copy`, `list`
 - **See also:** `copy_group`, `copy_group_objects`
 
-**Examples:**
-
-```
-list_group_copies my_structures
-```
-
 <details><summary>Full docstring</summary>
 
 ```
@@ -611,12 +516,6 @@ List all objects that contain a merged structure
 - **Tags:** `group`, `merge`, `list`
 - **See also:** `merge_to_group`, `merge_to_objects`
 
-**Examples:**
-
-```
-list_merged_objects ligand1
-```
-
 <details><summary>Full docstring</summary>
 
 ```
@@ -648,13 +547,6 @@ Merge a structure into every object in a group
 - **Since:** 1.0.0
 - **Tags:** `group`, `merge`, `combine`
 - **See also:** `merge_to_objects`, `list_merged_objects`
-
-**Examples:**
-
-```
-merge_to_group my_objects, ligand1
-merge_to_group proteins, cofactor, merged_proteins
-```
 
 <details><summary>Full docstring</summary>
 
@@ -696,13 +588,6 @@ Merge a structure into specific objects
 - **Tags:** `group`, `merge`, `combine`, `objects`
 - **See also:** `merge_to_group`, `list_merged_objects`
 
-**Examples:**
-
-```
-merge_to_objects obj1,obj2,obj3, ligand1
-merge_to_objects protein1,protein2, cofactor, merged_proteins
-```
-
 <details><summary>Full docstring</summary>
 
 ```
@@ -739,13 +624,6 @@ Sort objects in every PyMOL group alphabetically (asc/desc)
 - **Tags:** `group`, `sort`, `order`, `batch`
 - **See also:** `sort_group`
 
-**Examples:**
-
-```
-sort_all_groups
-sort_all_groups 1
-```
-
 <details><summary>Full docstring</summary>
 
 ```
@@ -779,13 +657,6 @@ Sort all objects within a group alphabetically (asc/desc)
 - **Since:** 1.0.0
 - **Tags:** `group`, `sort`, `order`
 - **See also:** `sort_all_groups`, `group_info`, `create_sorted_group`
-
-**Examples:**
-
-```
-sort_group my_proteins
-sort_group my_proteins, 1
-```
 
 <details><summary>Full docstring</summary>
 
