@@ -3,6 +3,12 @@
 All notable changes to PyMOLish are documented here. Entries are grouped by
 the version in `pyproject.toml`; the newest version is at the top.
 
+## 0.1.26 — 2026-11-06
+
+- Extended `load_smiles` file input with comma/semicolon CSV support, optional headers, UTF-8 BOM handling, and clear file-read errors.
+- Added `name_column` to choose file-based object names or disable them; single-entry labels now work and naming collisions no longer overwrite session objects.
+- Added `group_name` to place loaded molecules and conformer subgroups under a new or existing parent group.
+
 ## 0.1.25 — 2026-11-04
 
 - Added `pymolish_logo` meta-command: show/hide a PyMOLish logo + version overlay in the viewer.

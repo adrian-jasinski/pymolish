@@ -1,4 +1,4 @@
-"""Load molecules from SMILES strings or ``.smi`` files with RDKit conformers.
+"""Load molecules from SMILES strings or text/CSV files with RDKit conformers.
 
 RDKit is an optional dependency; install it with ``pymolish_install_deps rdkit``.
 """
@@ -10,6 +10,7 @@ import os
 from pymol import cmd
 
 from ...core.cli import clean
+from ...core.group_utils import GroupUtils
 from ...core.logging import plog
 
 _TAG = "io.smiles"
@@ -18,7 +19,7 @@ _INSTALL_HINT = (
     "pymolish_install_deps rdkit (or pip install 'pymolish[rdkit]' "
     "in PyMOL's Python environment)."
 )
-_SMI_SUFFIXES = (".smi", ".smiles", ".txt")
+_SMI_SUFFIXES = (".smi", ".smiles", ".txt", ".csv")
 _MODES = ("objects", "states")
 
 
@@ -47,16 +48,61 @@ def is_smiles(text: str) -> bool:
     return chem.MolFromSmiles(text) is not None
 
 
-def _read_entries(arg: str) -> list[tuple[str, str | None]]:
-    """Return ``[(smiles, name_or_None)]`` from a SMILES string or a ``.smi`` file."""
-    if not (os.path.isfile(arg) and arg.lower().endswith(_SMI_SUFFIXES)):
+def _read_entries(arg: str, name_column: int) -> list[tuple[str, str | None]]:
+    """Read inline SMILES or text/CSV rows with an optional one-based name column."""
+    path = os.path.expanduser(arg)
+    if not (path.lower().endswith(_SMI_SUFFIXES) or os.path.isfile(path)):
         return [(arg, None)]
+    with open(path, encoding="utf-8-sig", newline="") as handle:
+        lines = handle.readlines()
+    if path.lower().endswith(".csv"):
+        try:
+            import csv
+        except ImportError as exc:
+            raise ValueError(
+                "Python's standard-library csv module is unavailable. "
+                "Check or repair PyMOL's Python standard library."
+            ) from exc
+        sample = next(
+            (
+                line
+                for line in lines
+                if line.strip() and not line.lstrip().startswith("#")
+            ),
+            "",
+        )
+        try:
+            delimiter = csv.Sniffer().sniff(sample, delimiters=",;").delimiter
+        except csv.Error:
+            delimiter = ","  # A file may contain only the SMILES column.
+        try:
+            rows = list(
+                csv.reader(
+                    lines, delimiter=delimiter, skipinitialspace=True, strict=True
+                )
+            )
+        except csv.Error as exc:
+            raise ValueError(f"malformed CSV: {exc}") from exc
+    else:
+        rows = [
+            line.rstrip("\r\n").split("\t") if "\t" in line else line.split()
+            for line in lines
+        ]
+
     entries: list[tuple[str, str | None]] = []
-    with open(arg, encoding="utf-8") as handle:
-        for line in handle:
-            parts = line.split()
-            if parts and not parts[0].startswith("#"):
-                entries.append((parts[0], parts[1] if len(parts) > 1 else None))
+    first_row = True
+    for parts in rows:
+        if not parts or not parts[0].strip() or parts[0].lstrip().startswith("#"):
+            continue
+        smi = parts[0].strip()
+        if first_row and smi.lower() == "smiles":
+            first_row = False
+            continue
+        first_row = False
+        label = (
+            parts[name_column - 1].strip() if 0 < name_column <= len(parts) else None
+        )
+        entries.append((smi, label or None))
     return entries
 
 
@@ -103,36 +149,67 @@ def _load_blocks(blocks: list[str], name: str, as_states: bool) -> list[str]:
     return names
 
 
+def _available_name(
+    desired: str, count: int, as_states: bool, existing: set[str]
+) -> str:
+    """Avoid collisions for both the molecule name and its conformer objects."""
+    base = cmd.get_legal_name(desired) or "mol"
+    taken = set(existing)
+    while True:
+        name = GroupUtils.unique_name(base, list(taken))
+        if as_states or count == 1:
+            return name
+        if not any(f"{name}_{i}" in existing for i in range(1, count + 1)):
+            return name
+        taken.add(name)
+
+
 def load_smiles(
-    smiles: str,
+    smiles: str | os.PathLike[str],
     name: str | None = None,
     n_conformers: int | str = 10,
     mode: str = "objects",
     seed: int | str = 42,
+    group_name: str | None = None,
+    name_column: int | str = 2,
 ) -> list[str]:
-    """Load a molecule from a SMILES string (or ``.smi`` file) with 3D conformers.
+    """Load molecules from inline SMILES or a text/CSV file with 3D conformers.
 
     Conformers are generated with RDKit ETKDGv3, force-field minimized
     (MMFF94, UFF fallback) and loaded without touching the disk.
 
     Args:
-        smiles: SMILES string, or path to a ``.smi``/``.smiles``/``.txt`` file
-            with one ``SMILES [name]`` entry per line (``#`` lines ignored).
-        name: Object name. Defaults to an unused ``molNN`` name. For files the
-            per-line name wins; otherwise this is used as the prefix.
+        smiles: SMILES string or file path (quoted paths and ``~`` supported).
+            Existing files and paths ending in ``.smi``, ``.smiles``, ``.txt``,
+            or ``.csv`` are detected automatically. Text files use spaces/tabs;
+            CSV uses commas or semicolons (auto-detected, quotes supported).
+            Column 1 contains SMILES. Blank lines, ``#`` comments and an optional
+            initial ``SMILES`` header are skipped; unused metadata is ignored.
+            Files must be UTF-8 (an optional BOM is accepted).
+        name: Fallback object name for one molecule, or naming prefix for multiple
+            molecules. Defaults to an unused ``molNN`` name. File labels take
+            precedence. Names are made legal in PyMOL and unique in the session.
         n_conformers: Maximum number of conformers (RMS pruning may yield fewer).
         mode: ``objects`` loads ``name_1 .. name_n`` grouped under ``name``;
             ``states`` loads all conformers as states of one object ``name``.
         seed: Random seed for reproducible embedding.
+        group_name: Optional parent group for loaded molecules. Existing groups
+            are reused; conformer groups remain nested beneath this group.
+        name_column: One-based file column for object names/IDs (default: 2).
+            Use ``0`` to ignore file names. Missing/empty names use ``name`` or
+            an unused ``molNN`` name. Does not affect inline SMILES.
 
     Returns:
-        Names of the objects created (empty on error).
+        Names of successfully created objects. Invalid molecules are skipped;
+        input errors or files with no molecules return an empty list.
 
     Examples:
         PyMOL> load_smiles CC(=O)Oc1ccccc1C(=O)O
         PyMOL> load_smiles CC(=O)Oc1ccccc1C(=O)O, aspirin, 5
         PyMOL> load_smiles c1ccccc1O, phenol, 20, states
         PyMOL> load_smiles ligands.smi, lig, 3
+        PyMOL> load_smiles ligands.csv, group_name=ligands, name_column=3
+        PyMOL> load_smiles ligands.txt, name=lig, name_column=0
 
     Since:
         0.1.24
@@ -145,28 +222,62 @@ def load_smiles(
     except ImportError as exc:
         plog(_TAG, f"load_smiles cannot run: {exc}", "error")
         return []
-    smiles = clean(smiles)
+    smiles = clean(os.fspath(smiles))
     name = clean(name) if name else None
+    group_name = clean(group_name) if group_name else None
     mode = clean(mode).lower()
-    n_conformers = max(1, int(n_conformers))
+    try:
+        n_conformers = max(1, int(n_conformers))
+        seed = int(seed)
+        name_column = int(name_column)
+        if name_column < 0:
+            raise ValueError("name_column must be 0 or a positive column number")
+    except (TypeError, ValueError) as exc:
+        plog(_TAG, f"invalid numeric argument: {exc}", "error")
+        return []
     if mode not in _MODES:
         plog(_TAG, f"mode must be one of {', '.join(_MODES)}; got {mode!r}", "error")
         return []
 
-    entries = _read_entries(smiles)
+    try:
+        entries = _read_entries(smiles, name_column)
+    except (OSError, ValueError) as exc:
+        plog(_TAG, f"could not read {smiles!r}: {exc}", "error")
+        return []
+    if not entries:
+        plog(_TAG, "no SMILES entries found", "warn")
+        return []
+    existing = set(cmd.get_names() or [])
+    if group_name:
+        group_name = cmd.get_legal_name(group_name)
+        if not group_name or (
+            group_name in existing and not GroupUtils.is_group(group_name)
+        ):
+            plog(_TAG, f"cannot use {group_name!r} as a parent group", "error")
+            return []
+        existing.add(group_name)
     loaded: list[str] = []
+    members: list[str] = []
+    as_states = mode == "states"
     for smi, label in entries:
-        if len(entries) == 1:
-            obj = name or cmd.get_unused_name("mol")
-        else:
-            obj = label or cmd.get_unused_name(name or "mol")
         try:
-            blocks = _conformer_blocks(smi, n_conformers, int(seed))
+            blocks = _conformer_blocks(smi, n_conformers, seed)
         except ValueError as exc:
             plog(_TAG, str(exc), "error")
             continue
-        loaded.extend(_load_blocks(blocks, obj, mode == "states"))
+        desired = label or (name if len(entries) == 1 else None)
+        desired = desired or cmd.get_unused_name(name or "mol")
+        obj = _available_name(desired, len(blocks), as_states, existing)
+        objects = _load_blocks(blocks, obj, as_states)
+        loaded.extend(objects)
+        members.append(obj)
+        existing.update([obj, *objects])
         plog(_TAG, f"{obj}: {len(blocks)} conformer(s) as {mode}")
+    if group_name and members:
+        try:
+            GroupUtils.ensure_group(group_name, members)
+        except Exception as exc:  # noqa: BLE001 — PyMOL command failures
+            plog(_TAG, f"failed to group into {group_name!r}: {exc}", "warn")
     return loaded
 
 

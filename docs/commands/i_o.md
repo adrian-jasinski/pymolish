@@ -11,7 +11,7 @@ _9 command(s). Generated from the command registry — do not edit by hand._
 - [`list_loadable_files`](#list_loadable_files) — Preview files that would be loaded without loading them
 - [`load_files`](#load_files) — Load structure files from a directory with optional grouping
 - [`load_recursive`](#load_recursive) — Recursively load structure files from a directory tree
-- [`load_smiles`](#load_smiles) — Load a molecule from SMILES (or .smi file) with RDKit conformers
+- [`load_smiles`](#load_smiles) — Load SMILES or text/CSV files with conformers and grouping
 - [`paste_smiles`](#paste_smiles) — Load the clipboard as a molecule if it is a SMILES (Ctrl+V)
 
 ---
@@ -358,11 +358,11 @@ See Also:
 
 ### `load_smiles`
 
-Load a molecule from SMILES (or .smi file) with RDKit conformers
+Load SMILES or text/CSV files with conformers and grouping
 
-- **Usage:** `load_smiles <smiles> [name=None] [n_conformers=10] [mode='objects'] [seed=42]`
+- **Usage:** `load_smiles <smiles> [name=None] [n_conformers=10] [mode='objects'] [seed=42] [group_name=None] [name_column=2]`
 - **Since:** 0.1.24
-- **Tags:** `smiles`, `rdkit`, `conformers`, `load`, `ligand`
+- **Tags:** `smiles`, `rdkit`, `conformers`, `load`, `ligand`, `files`, `csv`, `group`
 - **See also:** `paste_smiles`, `pymolish_install_deps`
 
 **Examples:**
@@ -372,34 +372,50 @@ load_smiles CC(=O)Oc1ccccc1C(=O)O
 load_smiles CC(=O)Oc1ccccc1C(=O)O, aspirin, 5
 load_smiles c1ccccc1O, phenol, 20, states
 load_smiles ligands.smi, lig, 3
+load_smiles ligands.csv, group_name=ligands, name_column=3
+load_smiles ligands.txt, name=lig, name_column=0
 ```
 
 <details><summary>Full docstring</summary>
 
 ```
-Load a molecule from a SMILES string (or ``.smi`` file) with 3D conformers.
+Load molecules from inline SMILES or a text/CSV file with 3D conformers.
 
 Conformers are generated with RDKit ETKDGv3, force-field minimized
 (MMFF94, UFF fallback) and loaded without touching the disk.
 
 Args:
-    smiles: SMILES string, or path to a ``.smi``/``.smiles``/``.txt`` file
-        with one ``SMILES [name]`` entry per line (``#`` lines ignored).
-    name: Object name. Defaults to an unused ``molNN`` name. For files the
-        per-line name wins; otherwise this is used as the prefix.
+    smiles: SMILES string or file path (quoted paths and ``~`` supported).
+        Existing files and paths ending in ``.smi``, ``.smiles``, ``.txt``,
+        or ``.csv`` are detected automatically. Text files use spaces/tabs;
+        CSV uses commas or semicolons (auto-detected, quotes supported).
+        Column 1 contains SMILES. Blank lines, ``#`` comments and an optional
+        initial ``SMILES`` header are skipped; unused metadata is ignored.
+        Files must be UTF-8 (an optional BOM is accepted).
+    name: Fallback object name for one molecule, or naming prefix for multiple
+        molecules. Defaults to an unused ``molNN`` name. File labels take
+        precedence. Names are made legal in PyMOL and unique in the session.
     n_conformers: Maximum number of conformers (RMS pruning may yield fewer).
     mode: ``objects`` loads ``name_1 .. name_n`` grouped under ``name``;
         ``states`` loads all conformers as states of one object ``name``.
     seed: Random seed for reproducible embedding.
+    group_name: Optional parent group for loaded molecules. Existing groups
+        are reused; conformer groups remain nested beneath this group.
+    name_column: One-based file column for object names/IDs (default: 2).
+        Use ``0`` to ignore file names. Missing/empty names use ``name`` or
+        an unused ``molNN`` name. Does not affect inline SMILES.
 
 Returns:
-    Names of the objects created (empty on error).
+    Names of successfully created objects. Invalid molecules are skipped;
+    input errors or files with no molecules return an empty list.
 
 Examples:
     PyMOL> load_smiles CC(=O)Oc1ccccc1C(=O)O
     PyMOL> load_smiles CC(=O)Oc1ccccc1C(=O)O, aspirin, 5
     PyMOL> load_smiles c1ccccc1O, phenol, 20, states
     PyMOL> load_smiles ligands.smi, lig, 3
+    PyMOL> load_smiles ligands.csv, group_name=ligands, name_column=3
+    PyMOL> load_smiles ligands.txt, name=lig, name_column=0
 
 Since:
     0.1.24

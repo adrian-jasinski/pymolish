@@ -41,6 +41,15 @@ def test_init_plugin_registers_autocompletion(pymol_cmd):
     AutocompletionRegistry.instance().apply()
     commands_at_slot_0 = set(pymol_cmd.auto_arg[0].keys())
     assert {"load_files", "export_group", "export_byres_to_csv"} <= commands_at_slot_0
+    assert "load_smiles" in commands_at_slot_0
+    assert pymol_cmd.auto_arg[3]["load_smiles"][1] == "mode"
+    group_completer, label = pymol_cmd.auto_arg[5]["load_smiles"]
+    assert label == "group_name"
+    pymol_cmd.get_names.return_value = ["screen", "structure"]
+    pymol_cmd.get_type.side_effect = lambda name: (
+        "object:group" if name == "screen" else "object:molecule"
+    )
+    assert group_completer("s") == ["screen"]
 
 
 @pytest.mark.parametrize("missing_module", ["csv", "_csv"])
@@ -115,6 +124,21 @@ def test_plugin_loads_files_without_csv(missing_module):
             assert missing in message, message
             assert 'standard library' in message, message
             assert not cmd.mock_calls, cmd.mock_calls
+
+            read_entries = importlib.import_module(
+                plugin.__name__ + '.extensions.io.load_smiles'
+            )._read_entries
+            smiles = Path(directory) / 'ligands.smi'
+            smiles.write_text('CCO ethanol\\n')
+            assert read_entries(str(smiles), 2) == [('CCO', 'ethanol')]
+            csv_smiles = Path(directory) / 'ligands.csv'
+            csv_smiles.write_text('CCO,ethanol\\n')
+            try:
+                read_entries(str(csv_smiles), 2)
+            except ValueError as exc:
+                assert 'standard library' in str(exc), exc
+            else:
+                raise AssertionError('missing csv should report an actionable error')
         """
     )
     result = subprocess.run(

@@ -75,15 +75,26 @@ def __init_plugin__(app: object | None = None) -> None:
         "load_smiles",
         load_smiles,
         category=CATEGORY,
-        description="Load a molecule from SMILES (or .smi file) with RDKit conformers",
+        description="Load SMILES or text/CSV files with conformers and grouping",
         examples=[
             "load_smiles CC(=O)Oc1ccccc1C(=O)O",
             "load_smiles CC(=O)Oc1ccccc1C(=O)O, aspirin, 5",
             "load_smiles c1ccccc1O, phenol, 20, states",
             "load_smiles ligands.smi, lig, 3",
+            "load_smiles ligands.csv, group_name=ligands, name_column=3",
+            "load_smiles ligands.txt, name=lig, name_column=0",
         ],
         since="0.1.24",
-        tags=["smiles", "rdkit", "conformers", "load", "ligand"],
+        tags=[
+            "smiles",
+            "rdkit",
+            "conformers",
+            "load",
+            "ligand",
+            "files",
+            "csv",
+            "group",
+        ],
         see_also=["paste_smiles", "pymolish_install_deps"],
     )
 
@@ -166,6 +177,7 @@ def __init_plugin__(app: object | None = None) -> None:
 
     autocomplete.register("load_smiles", 0, completers.directory, "smiles")
     autocomplete.register("load_smiles", 3, _complete_mode, "mode")
+    autocomplete.register("load_smiles", 5, completers.group_name, "group_name")
     autocomplete.register("paste_smiles", 1, _complete_mode, "mode")
 
     autocomplete.register("export_group", 0, completers.group_name, "group")
